@@ -16,6 +16,6 @@ export class AddressMemory {
   }
 
   public get getSize(): number {
-    return this.end - this.start + 1
+    return this.end - this.start
   }
 }

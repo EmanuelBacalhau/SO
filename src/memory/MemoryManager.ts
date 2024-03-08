@@ -1,8 +1,5 @@
-'use-strict'
-
 import { Process } from '../process/Process'
 import { Strategy } from './Strategy'
-import { AddressMemory } from './AddressMemory'
 
 export class MemoryManager {
   public physicMemory: string[]
@@ -30,6 +27,7 @@ export class MemoryManager {
 
   private writeWithFirstFit(process: Process): void {
     let counterEmptyMemory = 0
+    let counterMemoryInUse = 0
     let startIndex = 0
     let endIndex = 0
 
@@ -40,11 +38,12 @@ export class MemoryManager {
         counterEmptyMemory++
 
         if (counterEmptyMemory === process.getSize) {
-          endIndex = startIndex + counterEmptyMemory + 1
+          endIndex = startIndex + counterEmptyMemory
           break
         }
       } else {
         startIndex = i + 1
+        counterMemoryInUse++
         counterEmptyMemory = 0
       }
     }
@@ -57,7 +56,7 @@ export class MemoryManager {
 
       for (
         let indexMemory = process.getAddress.getStart;
-        indexMemory < process.getAddress.getEnd;
+        indexMemory <= process.getAddress.getEnd;
         indexMemory++
       ) {
         this.physicMemory[indexMemory] = process.getId
@@ -66,7 +65,13 @@ export class MemoryManager {
 
       this.logFinishProcess(process.getId)
     } else {
-      this.logErrorInCreateProcess(process.getId, process.getSize)
+      const remainingMomory = this.physicMemory.length - counterMemoryInUse
+
+      this.logErrorInCreateProcess(
+        process.getId,
+        process.getSize,
+        remainingMomory,
+      )
     }
   }
 
@@ -85,15 +90,19 @@ export class MemoryManager {
   }
 
   private logFinishProcess(id: string) {
-    console.log(`\nProcess: ${id} inicializado!\n`)
+    console.log(`\nProcess: ${id} initialized!\n`)
   }
 
-  private logErrorInCreateProcess(id: string, size: number) {
+  private logErrorInCreateProcess(
+    id: string,
+    size: number,
+    remainingMomory: number,
+  ) {
     console.log({
       error: 'Insuffcient memory',
       process: id,
       size,
-      // remainingMomory: counter,
+      remainingMomory,
     })
   }
 }
