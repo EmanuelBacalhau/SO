@@ -2,7 +2,7 @@ import { Process } from '../process/Process'
 import { Strategy } from './Strategy'
 
 export class MemoryManager {
-  public physicMemory: string[]
+  public physicMemory: string[] | undefined[]
   // private logicMemory: string[]
   private strategy: Strategy
 
@@ -17,9 +17,11 @@ export class MemoryManager {
     }
 
     if (this.strategy === Strategy.BEST_FIT) {
+      this.writeWithBestFit(process)
     }
 
     if (this.strategy === Strategy.WORST_FIT) {
+      this.writeWithWorstFit(process)
     }
 
     // if (this.strategy === Strategy.PAGING) {}
@@ -37,7 +39,7 @@ export class MemoryManager {
       if (!element) {
         counterEmptyMemory++
 
-        if (counterEmptyMemory === process.getSize) {
+        if (counterEmptyMemory >= process.getSize) {
           endIndex = startIndex + counterEmptyMemory
           break
         }
@@ -56,7 +58,7 @@ export class MemoryManager {
 
       for (
         let indexMemory = process.getAddress.getStart;
-        indexMemory <= process.getAddress.getEnd;
+        indexMemory < process.getAddress.getEnd;
         indexMemory++
       ) {
         this.physicMemory[indexMemory] = process.getId
@@ -73,6 +75,28 @@ export class MemoryManager {
         remainingMomory,
       )
     }
+  }
+
+  private writeWithBestFit(process: Process): void {}
+
+  private writeWithWorstFit(process: Process): void {}
+
+  public deleteProcess(id: string): void {
+    for (let i = 0; i < this.physicMemory.length; i++) {
+      const element = this.physicMemory[i]
+
+      if (element === id) {
+        this.physicMemory[i] = undefined
+      }
+    }
+
+    console.log(
+      `----------------------------------------------------------------------------`,
+    )
+    console.log(`Process remove: ${id} with success!`)
+    console.log(
+      `----------------------------------------------------------------------------\n`,
+    )
   }
 
   private logInitialProcess(size: number, id: string) {
@@ -104,5 +128,6 @@ export class MemoryManager {
       size,
       remainingMomory,
     })
+    console.log('\n')
   }
 }

@@ -2,7 +2,6 @@ import { Process } from '../process/Process'
 import { Strategy } from '../memory/Strategy'
 import { CpuManager } from '../cpu/CpuManager'
 import { SystemCallType } from './SystemCallType'
-import { Scheduler } from '../scheduler/Scheduler'
 import { MemoryManager } from '../memory/MemoryManager'
 
 export class SystemOperation {
@@ -21,7 +20,10 @@ export class SystemOperation {
     }
 
     if (type === SystemCallType.CLOSE_PROCESS) {
+      this.memoryManager.deleteProcess(process.getId)
     }
+
+    // if (type === SystemCallType.READ_PROCESS) {}
 
     return null
   }
