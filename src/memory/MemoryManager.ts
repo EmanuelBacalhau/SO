@@ -1,7 +1,7 @@
 import { Process } from '../process/Process'
 import { Strategy } from './Strategy'
 
-interface AddressMemory {
+interface AddressMemoryProps {
   start: number
   end: number
 }
@@ -33,7 +33,7 @@ export class MemoryManager {
   }
 
   // UTILS
-  private allocateProcess(addressMemory: AddressMemory, process: Process) {
+  private allocateProcess(addressMemory: AddressMemoryProps, process: Process) {
     process.setAddress({ start: addressMemory.start, end: addressMemory.end })
 
     this.initialProcess(process)
@@ -55,7 +55,7 @@ export class MemoryManager {
   }
 
   // FIRST-FIT
-  private findFirstFit(size: number): AddressMemory | null {
+  private findFirstFit(size: number): AddressMemoryProps | null {
     let emptyMemoryCount = 0
     let startIndex = 0
     let endIndex = 0
@@ -90,18 +90,18 @@ export class MemoryManager {
   }
 
   // BEST-FIT
-  private findBestFit(size: number): AddressMemory | null {
+  private findBestFit(size: number): AddressMemoryProps | null {
     let smallMemoryFits = false
     let bigMemoryFits = false
 
     let smallMemoryLength = 0
     let bigMemoryLength = 0
 
-    let smallMemory: AddressMemory = {
+    let smallMemory: AddressMemoryProps = {
       start: 0,
       end: 0,
     }
-    let bigMemory: AddressMemory = { start: 0, end: 0 }
+    let bigMemory: AddressMemoryProps = { start: 0, end: 0 }
 
     let emptyMemoryCount = 0
     let memoryInUseCount = 0
@@ -156,8 +156,8 @@ export class MemoryManager {
   }
 
   // WORST-FIT
-  private findWorstFit(size: number): AddressMemory | null {
-    let memory: AddressMemory = {
+  private findWorstFit(size: number): AddressMemoryProps | null {
+    let memory: AddressMemoryProps = {
       start: 0,
       end: 0,
     }
@@ -198,7 +198,7 @@ export class MemoryManager {
   }
 
   // DELETE PROCESS
-  public deleteProcess(id: string, { start, end }: AddressMemory): void {
+  public deleteProcess(id: string, { start, end }: AddressMemoryProps): void {
     this.physicMemory = this.physicMemory.map((element) => {
       if (element === id) {
         return undefined
