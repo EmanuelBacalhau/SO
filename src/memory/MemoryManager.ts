@@ -28,8 +28,8 @@ export class MemoryManager {
   }
 
   private writeWithFirstFit(process: Process): void {
-    let counterEmptyMemory = 0
-    let counterMemoryInUse = 0
+    let emptyMemoryCount = 0
+    let memoryInUseCount = 0
     let startIndex = 0
     let endIndex = 0
 
@@ -37,28 +37,28 @@ export class MemoryManager {
       const element = this.physicMemory[i]
 
       if (!element) {
-        counterEmptyMemory++
+        emptyMemoryCount++
 
-        if (counterEmptyMemory >= process.getSize) {
-          endIndex = startIndex + counterEmptyMemory
+        if (emptyMemoryCount >= process.getSize) {
+          endIndex = startIndex + emptyMemoryCount
           break
         }
       } else {
         startIndex = i + 1
-        counterMemoryInUse++
-        counterEmptyMemory = 0
+        memoryInUseCount++
+        emptyMemoryCount = 0
       }
     }
 
     process.setAddress({ start: startIndex, end: endIndex })
-    const checkTheSize = process.getAddress.getSize >= process.getSize
+    const checkTheSize = process.getAddress!.getSize >= process.getSize
 
     if (checkTheSize) {
       this.logInitialProcess(process.getSize, process.getId)
 
       for (
-        let indexMemory = process.getAddress.getStart;
-        indexMemory < process.getAddress.getEnd;
+        let indexMemory = process.getAddress!.getStart;
+        indexMemory < process.getAddress!.getEnd;
         indexMemory++
       ) {
         this.physicMemory[indexMemory] = process.getId
@@ -67,19 +67,87 @@ export class MemoryManager {
 
       this.logFinishProcess(process.getId)
     } else {
-      const remainingMomory = this.physicMemory.length - counterMemoryInUse
-
-      this.logErrorInCreateProcess(
-        process.getId,
-        process.getSize,
-        remainingMomory,
-      )
+      this.logErrorInCreateProcess(process.getId, process.getSize)
     }
   }
 
-  private writeWithBestFit(process: Process): void {}
+  private writeWithBestFit(process: Process): void {
+    const memories = {
+      small: {
+        length: 0,
+        startIndex: 0,
+        endIndex: 0,
+        fits: false,
+      },
+      big: {
+        length: 0,
+        startIndex: 0,
+        endIndex: 0,
+        fits: false,
+      },
+    }
 
-  private writeWithWorstFit(process: Process): void {}
+    let emptyMemoryCount = 0
+    let memoryInUseCount = 0
+
+    for (let i = 0; i < this.physicMemory.length; i++) {
+      const element = this.physicMemory[i]
+
+      if (!element) {
+        emptyMemoryCount++
+
+        if (
+          emptyMemoryCount > memories.big.length &&
+          emptyMemoryCount >= process.getSize
+        ) {
+          memories.big = {
+            length: emptyMemoryCount,
+            startIndex: i - emptyMemoryCount + 1,
+            endIndex: memoryInUseCount + process.getSize,
+            fits: true,
+          }
+
+          break
+        }
+      } else {
+        if (
+          emptyMemoryCount > memories.small.length &&
+          emptyMemoryCount >= process.getSize
+        ) {
+          memories.small = {
+            length: emptyMemoryCount,
+            startIndex: i - emptyMemoryCount,
+            endIndex: i - 1,
+            fits: true,
+          }
+        }
+        emptyMemoryCount = 0
+        memoryInUseCount++
+      }
+    }
+
+    if (memories.small.fits) {
+      process.setAddress({
+        start: memories.small.startIndex,
+        end: memories.small.endIndex,
+      })
+
+      this.initialProcess(process)
+    } else if (memories.big.fits) {
+      process.setAddress({
+        start: memories.big.startIndex,
+        end: memories.big.endIndex,
+      })
+
+      this.initialProcess(process)
+    } else {
+      this.logErrorInCreateProcess(process.getId, process.getSize)
+    }
+  }
+
+  private writeWithWorstFit(process: Process): void {
+    console.log(process.getId)
+  }
 
   public deleteProcess(id: string): void {
     for (let i = 0; i < this.physicMemory.length; i++) {
@@ -99,14 +167,26 @@ export class MemoryManager {
     )
   }
 
+  private initialProcess(process: Process) {
+    this.logInitialProcess(process.getSize, process.getId)
+
+    for (
+      let indexMemory = process.getAddress!.getStart;
+      indexMemory < process.getAddress!.getEnd;
+      indexMemory++
+    ) {
+      this.physicMemory[indexMemory] = process.getId
+      this.logCreateProcess(indexMemory, process.getId)
+    }
+
+    this.logFinishProcess(process.getId)
+  }
+
   private logInitialProcess(size: number, id: string) {
     console.log(
       `----------------------------------------------------------------------------`,
     )
-    console.log(`Process: ${id} - size: ${size}`)
-    console.log(
-      `----------------------------------------------------------------------------\n`,
-    )
+    console.log(`Process: ${id}\nSize: ${size}\n`)
   }
 
   private logCreateProcess(index: number, id: string) {
@@ -115,18 +195,16 @@ export class MemoryManager {
 
   private logFinishProcess(id: string) {
     console.log(`\nProcess: ${id} initialized!\n`)
+    console.log(
+      `----------------------------------------------------------------------------\n`,
+    )
   }
 
-  private logErrorInCreateProcess(
-    id: string,
-    size: number,
-    remainingMomory: number,
-  ) {
+  private logErrorInCreateProcess(id: string, size: number) {
     console.log({
       error: 'Insuffcient memory',
       process: id,
       size,
-      remainingMomory,
     })
     console.log('\n')
   }

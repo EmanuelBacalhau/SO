@@ -9,8 +9,8 @@ export class SystemOperation {
   private cpuManager: CpuManager
   // private scheduler: Scheduler
 
-  constructor() {
-    this.memoryManager = new MemoryManager(Strategy.FIRST_FIT)
+  constructor(strategy: Strategy) {
+    this.memoryManager = new MemoryManager(strategy)
     this.cpuManager = new CpuManager()
   }
 

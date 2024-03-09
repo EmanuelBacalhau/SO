@@ -9,7 +9,7 @@ interface CreateAddress {
 export class Process {
   private id: string
   private size: number
-  private address: AddressMemory
+  private address: AddressMemory | null = null
 
   // segunda etapa
   // private time: number
@@ -19,7 +19,7 @@ export class Process {
 
   constructor() {
     this.id = randomUUID()
-    this.size = Math.round(Math.random() * 128)
+    this.size = Math.round(Math.random() * 100)
   }
 
   public get getId(): string {
@@ -30,7 +30,7 @@ export class Process {
     return this.size
   }
 
-  public get getAddress(): AddressMemory {
+  public get getAddress(): AddressMemory | null {
     return this.address
   }
 
