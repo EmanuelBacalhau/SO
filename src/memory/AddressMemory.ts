@@ -14,8 +14,4 @@ export class AddressMemory {
   public get getEnd(): number {
     return this.end
   }
-
-  public get getSize(): number {
-    return this.end - this.start
-  }
 }

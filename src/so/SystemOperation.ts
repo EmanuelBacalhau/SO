@@ -14,13 +14,27 @@ export class SystemOperation {
     this.cpuManager = new CpuManager()
   }
 
-  public systemCall(type: SystemCallType, process: Process): Process | null {
-    if (type === SystemCallType.WRITE_PROCESS) {
+  public systemCall(
+    type: SystemCallType,
+    process: Process | null = null,
+  ): Process | null {
+    if (type === SystemCallType.OPEN_PROCESS) {
+      return this.createProcess()
+    }
+
+    if (type === SystemCallType.WRITE_PROCESS && process) {
       this.memoryManager.write(process)
     }
 
-    if (type === SystemCallType.CLOSE_PROCESS) {
-      this.memoryManager.deleteProcess(process.getId)
+    if (
+      type === SystemCallType.CLOSE_PROCESS &&
+      process &&
+      process.getAddress
+    ) {
+      this.memoryManager.deleteProcess(process.getId, {
+        start: process.getAddress!.getStart,
+        end: process.getAddress!.getEnd - 1,
+      })
     }
 
     // if (type === SystemCallType.READ_PROCESS) {}
@@ -28,7 +42,7 @@ export class SystemOperation {
     return null
   }
 
-  public createProcess(): Process {
+  private createProcess(): Process {
     return new Process()
   }
 }
