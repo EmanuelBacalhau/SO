@@ -1,8 +1,10 @@
+import { AddressMemoryProps } from './AddressMemoryProps'
+
 export class AddressMemory {
   private start: number
   private end: number
 
-  constructor(start: number, end: number) {
+  constructor({ start, end }: AddressMemoryProps) {
     this.start = start
     this.end = end
   }

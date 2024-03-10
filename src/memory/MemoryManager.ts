@@ -1,10 +1,6 @@
 import { Process } from '../process/Process'
+import { AddressMemoryProps } from './AddressMemoryProps'
 import { Strategy } from './Strategy'
-
-interface AddressMemoryProps {
-  start: number
-  end: number
-}
 
 export class MemoryManager {
   public physicMemory: (string | undefined)[]

@@ -1,10 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { AddressMemory } from '../memory/AddressMemory'
-
-interface CreateAddress {
-  start: number
-  end: number
-}
+import { AddressMemoryProps } from '../memory/AddressMemoryProps'
 
 export class Process {
   private id: string
@@ -34,7 +30,7 @@ export class Process {
     return this.address
   }
 
-  public setAddress({ start, end }: CreateAddress) {
-    this.address = new AddressMemory(start, end)
+  public setAddress({ start, end }: AddressMemoryProps) {
+    this.address = new AddressMemory({ start, end })
   }
 }
