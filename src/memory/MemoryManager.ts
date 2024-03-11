@@ -53,8 +53,8 @@ export class MemoryManager {
   // FIRST-FIT
   private findFirstFit(size: number): AddressMemoryProps | null {
     let emptyMemoryCount = 0
-    let startIndex = 0
-    let endIndex = 0
+
+    const memory: AddressMemoryProps = { start: 0, end: 0 }
 
     for (let i = 0; i < this.physicMemory.length; i++) {
       const element = this.physicMemory[i]
@@ -63,11 +63,11 @@ export class MemoryManager {
         emptyMemoryCount++
 
         if (emptyMemoryCount >= size) {
-          endIndex = startIndex + emptyMemoryCount
-          return { start: startIndex, end: endIndex }
+          memory.end = memory.start + emptyMemoryCount
+          return memory
         }
       } else {
-        startIndex = i + 1
+        memory.start = i + 1
         emptyMemoryCount = 0
       }
     }
@@ -87,9 +87,6 @@ export class MemoryManager {
 
   // BEST-FIT
   private findBestFit(size: number): AddressMemoryProps | null {
-    let smallMemoryFits = false
-    let bigMemoryFits = false
-
     let smallMemoryLength = 0
     let bigMemoryLength = 0
 
@@ -100,37 +97,28 @@ export class MemoryManager {
     let bigMemory: AddressMemoryProps = { start: 0, end: 0 }
 
     let emptyMemoryCount = 0
-    let memoryInUseCount = 0
 
     for (let i = 0; i < this.physicMemory.length; i++) {
       const element = this.physicMemory[i]
 
       if (!element) {
         emptyMemoryCount++
-        const checkSize =
-          emptyMemoryCount >= size && emptyMemoryCount > bigMemoryLength
 
-        if (checkSize) {
+        if (emptyMemoryCount >= size && emptyMemoryCount > bigMemoryLength) {
           bigMemory = {
             start: i - emptyMemoryCount + 1,
-            end: memoryInUseCount + size,
+            end: bigMemory.start + size,
           }
 
           bigMemoryLength = emptyMemoryCount
-          bigMemoryFits = true
         }
       } else {
-        memoryInUseCount++
-
-        const checkSize =
-          emptyMemoryCount >= size && emptyMemoryCount > smallMemoryLength
-        if (checkSize) {
+        if (emptyMemoryCount >= size && emptyMemoryCount > smallMemoryLength) {
           smallMemory = {
             start: i - emptyMemoryCount,
-            end: size + memoryInUseCount,
+            end: smallMemory.start + size,
           }
 
-          smallMemoryFits = true
           smallMemoryLength = emptyMemoryCount
         }
 
@@ -138,7 +126,11 @@ export class MemoryManager {
       }
     }
 
-    return smallMemoryFits ? smallMemory : bigMemoryFits ? bigMemory : null
+    return smallMemoryLength !== 0
+      ? smallMemory
+      : bigMemoryLength !== 0
+        ? bigMemory
+        : null
   }
 
   private writeWithBestFit(process: Process): void {
