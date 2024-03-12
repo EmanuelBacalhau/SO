@@ -40,7 +40,7 @@ export class MemoryManager {
 
     for (
       let indexMemory = process.getAddress!.getStart;
-      indexMemory < process.getAddress!.getEnd;
+      indexMemory <= process.getAddress!.getEnd;
       indexMemory++
     ) {
       this.physicMemory[indexMemory] = process.getId
@@ -63,7 +63,7 @@ export class MemoryManager {
         emptyMemoryCount++
 
         if (emptyMemoryCount >= size) {
-          memory.end = memory.start + emptyMemoryCount
+          memory.end = memory.start + size - 1
           return memory
         }
       } else {
@@ -107,7 +107,7 @@ export class MemoryManager {
         if (emptyMemoryCount >= size && emptyMemoryCount > bigMemoryLength) {
           bigMemory = {
             start: i - emptyMemoryCount + 1,
-            end: bigMemory.start + size,
+            end: bigMemory.start + size - 1,
           }
 
           bigMemoryLength = emptyMemoryCount
@@ -116,7 +116,7 @@ export class MemoryManager {
         if (emptyMemoryCount >= size && emptyMemoryCount > smallMemoryLength) {
           smallMemory = {
             start: i - emptyMemoryCount,
-            end: smallMemory.start + size,
+            end: smallMemory.start + size - 1,
           }
 
           smallMemoryLength = emptyMemoryCount
@@ -162,7 +162,7 @@ export class MemoryManager {
         if (emptyMemoryCount >= size && emptyMemoryCount > bigMemory) {
           memory = {
             start: i - emptyMemoryCount + 1,
-            end: memory.start + size,
+            end: memory.start + size - 1,
           }
 
           bigMemory = emptyMemoryCount

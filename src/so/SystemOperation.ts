@@ -33,7 +33,7 @@ export class SystemOperation {
     ) {
       this.memoryManager.deleteProcess(process.getId, {
         start: process.getAddress!.getStart,
-        end: process.getAddress!.getEnd - 1,
+        end: process.getAddress!.getEnd,
       })
     }
 
