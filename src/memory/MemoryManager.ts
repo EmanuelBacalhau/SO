@@ -8,7 +8,7 @@ export class MemoryManager {
   private strategy: Strategy
 
   constructor(strategy: Strategy) {
-    this.physicMemory = new Array<string>(4)
+    this.physicMemory = new Array<string>(128)
     this.strategy = strategy
   }
 

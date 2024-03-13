@@ -15,7 +15,7 @@ export class Process {
 
   constructor() {
     this.id = randomUUID()
-    this.size = 1
+    this.size = Math.round(Math.random() * 128)
   }
 
   public get getId(): string {
