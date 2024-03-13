@@ -8,7 +8,7 @@ export class MemoryManager {
   private strategy: Strategy
 
   constructor(strategy: Strategy) {
-    this.physicMemory = new Array<string>(128)
+    this.physicMemory = new Array<string>(4)
     this.strategy = strategy
   }
 
@@ -87,50 +87,31 @@ export class MemoryManager {
 
   // BEST-FIT
   private findBestFit(size: number): AddressMemoryProps | null {
-    let smallMemoryLength = 0
-    let bigMemoryLength = 0
+    let start = -1
+    let small = this.physicMemory.length + 1
 
-    let smallMemory: AddressMemoryProps = {
-      start: 0,
-      end: 0,
-    }
-    let bigMemory: AddressMemoryProps = { start: 0, end: 0 }
-
-    let emptyMemoryCount = 0
+    let memory: AddressMemoryProps | null = null
 
     for (let i = 0; i < this.physicMemory.length; i++) {
-      const element = this.physicMemory[i]
+      let j = i
 
-      if (!element) {
-        emptyMemoryCount++
+      while (!this.physicMemory[j] && j < this.physicMemory.length) {
+        j++
+      }
 
-        if (emptyMemoryCount >= size && emptyMemoryCount > bigMemoryLength) {
-          bigMemory = {
-            start: i - emptyMemoryCount + 1,
-            end: bigMemory.start + size - 1,
-          }
-
-          bigMemoryLength = emptyMemoryCount
-        }
-      } else {
-        if (emptyMemoryCount >= size && emptyMemoryCount > smallMemoryLength) {
-          smallMemory = {
-            start: i - emptyMemoryCount,
-            end: smallMemory.start + size - 1,
-          }
-
-          smallMemoryLength = emptyMemoryCount
-        }
-
-        emptyMemoryCount = 0
+      const length = j - i
+      if (length >= size && length < small) {
+        start = i
+        small = length
+        i = j - 1
       }
     }
 
-    return smallMemoryLength !== 0
-      ? smallMemory
-      : bigMemoryLength !== 0
-        ? bigMemory
-        : null
+    if (start !== -1) {
+      memory = { start, end: start + size - 1 }
+    }
+
+    return size !== -1 ? memory : null
   }
 
   private writeWithBestFit(process: Process): void {
@@ -145,34 +126,31 @@ export class MemoryManager {
 
   // WORST-FIT
   private findWorstFit(size: number): AddressMemoryProps | null {
-    let memory: AddressMemoryProps = {
-      start: 0,
-      end: 0,
-    }
+    let small = -1
+    let big = -1
 
-    let emptyMemoryCount = 0
-    let bigMemory = 0
+    let memory: AddressMemoryProps | null = null
 
     for (let i = 0; i < this.physicMemory.length; i++) {
-      const element = this.physicMemory[i]
+      let j = i
 
-      if (!element) {
-        emptyMemoryCount++
+      while (!this.physicMemory[j] && j < this.physicMemory.length) {
+        j++
+      }
 
-        if (emptyMemoryCount >= size && emptyMemoryCount > bigMemory) {
-          memory = {
-            start: i - emptyMemoryCount + 1,
-            end: memory.start + size - 1,
-          }
-
-          bigMemory = emptyMemoryCount
-        }
-      } else {
-        emptyMemoryCount = 0
+      const length = j - i
+      if (length >= size && length > big) {
+        small = i
+        big = length
+        i = j - 1
       }
     }
 
-    return bigMemory > 0 ? memory : null
+    if (big !== -1) {
+      memory = { start: small, end: small + size - 1 }
+    }
+
+    return memory
   }
 
   private writeWithWorstFit(process: Process): void {
