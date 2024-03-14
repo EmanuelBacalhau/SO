@@ -1,15 +1,21 @@
 import { Process } from '../process/Process'
 import { AddressMemoryProps } from './AddressMemoryProps'
+import { FrameMemory } from './FrameMemory'
 import { Strategy } from './Strategy'
 
 export class MemoryManager {
   public physicMemory: (string | undefined)[]
-  // private logicMemory: string[]
   private strategy: Strategy
 
+  private logicMemory: Map<string, FrameMemory[]>
+  private pageSize: number
+
   constructor(strategy: Strategy) {
-    this.physicMemory = new Array<string>(128)
+    this.physicMemory = new Array<string>(20)
     this.strategy = strategy
+
+    this.logicMemory = new Map<string, FrameMemory[]>()
+    this.pageSize = 2
   }
 
   public write(process: Process): void {
@@ -25,7 +31,9 @@ export class MemoryManager {
       this.writeWithWorstFit(process)
     }
 
-    // if (this.strategy === Strategy.PAGING) {}
+    if (this.strategy === Strategy.PAGING) {
+      this.writeWithPaging(process)
+    }
   }
 
   // UTILS
@@ -158,6 +166,27 @@ export class MemoryManager {
 
     if (memory) {
       this.allocateProcess({ start: memory.start, end: memory.end }, process)
+    } else {
+      this.logErrorInCreateProcess(process.getId, process.getSize)
+    }
+  }
+
+  // PAGING
+  private findPaging(size: number): null | FrameMemory[] {
+    console.log(size)
+
+    return null
+  }
+
+  private writeInPhysicMemoryWithPaging(frames: FrameMemory[]) {
+    console.log(frames)
+  }
+
+  private writeWithPaging(process: Process) {
+    const frames = this.findPaging(process.getSize)
+
+    if (frames) {
+      this.writeInPhysicMemoryWithPaging(frames)
     } else {
       this.logErrorInCreateProcess(process.getId, process.getSize)
     }
