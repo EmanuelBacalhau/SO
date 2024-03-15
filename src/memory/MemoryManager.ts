@@ -1,21 +1,21 @@
 import { Process } from '../process/Process'
+import { AddressMemory } from './AddressMemory'
 import { AddressMemoryProps } from './AddressMemoryProps'
-import { FrameMemory } from './FrameMemory'
 import { Strategy } from './Strategy'
 
 export class MemoryManager {
   public physicMemory: (string | undefined)[]
   private strategy: Strategy
 
-  private logicMemory: Map<string, FrameMemory[]>
+  private logicMemory: Map<string, AddressMemory[]>
   private pageSize: number
 
   constructor(strategy: Strategy) {
     this.physicMemory = new Array<string>(20)
     this.strategy = strategy
 
-    this.logicMemory = new Map<string, FrameMemory[]>()
-    this.pageSize = 2
+    this.logicMemory = new Map<string, AddressMemory[]>()
+    this.pageSize = 4
   }
 
   public write(process: Process): void {
@@ -38,7 +38,10 @@ export class MemoryManager {
 
   // UTILS
   private allocateProcess(addressMemory: AddressMemoryProps, process: Process) {
-    process.setAddress({ start: addressMemory.start, end: addressMemory.end })
+    process.setUniqueAddress({
+      start: addressMemory.start,
+      end: addressMemory.end,
+    })
 
     this.initialProcess(process)
   }
@@ -46,16 +49,18 @@ export class MemoryManager {
   private initialProcess(process: Process) {
     this.logInitialProcess(process.getSize, process.getId)
 
-    for (
-      let indexMemory = process.getAddress!.getStart;
-      indexMemory <= process.getAddress!.getEnd;
-      indexMemory++
-    ) {
-      this.physicMemory[indexMemory] = process.getId
-      this.logCreateProcess(indexMemory, process.getId)
-    }
+    if (process.getAddress instanceof AddressMemory) {
+      for (
+        let indexMemory = process.getAddress!.getStart;
+        indexMemory <= process.getAddress!.getEnd;
+        indexMemory++
+      ) {
+        this.physicMemory[indexMemory] = process.getId
+        this.logCreateProcess(indexMemory, process.getId)
+      }
 
-    this.logFinishProcess(process.getId)
+      this.logFinishProcess(process.getId)
+    }
   }
 
   // FIRST-FIT
@@ -172,44 +177,117 @@ export class MemoryManager {
   }
 
   // PAGING
-  private findPaging(size: number): null | FrameMemory[] {
-    console.log(size)
+  private findPaging(size: number): null | AddressMemory[] {
+    const quantityPages = Math.round(size / this.pageSize)
 
-    return null
+    const addressesMemory: AddressMemory[] = []
+
+    let emptyCountInPage = 0
+
+    for (
+      let page = this.pageSize;
+      page <= this.physicMemory.length;
+      page += this.pageSize
+    ) {
+      const start = page - this.pageSize
+      const end = page - 1
+
+      for (let i = start; i <= end; i++) {
+        if (!this.physicMemory[i]) {
+          emptyCountInPage++
+
+          if (emptyCountInPage === this.pageSize) {
+            addressesMemory.push(new AddressMemory({ start, end }))
+          }
+
+          if (addressesMemory.length === quantityPages) {
+            break
+          }
+
+          if (i === end) {
+            emptyCountInPage = 0
+          }
+        } else {
+          emptyCountInPage = 0
+        }
+      }
+    }
+
+    return addressesMemory.length === quantityPages ? addressesMemory : null
   }
 
-  private writeInPhysicMemoryWithPaging(frames: FrameMemory[]) {
-    console.log(frames)
+  private allocateProcessWithPaging(
+    memories: AddressMemory[],
+    process: Process,
+  ) {
+    process.setManyAddresses(memories)
+
+    if (process.getSize % 2 === 1) {
+      const element = memories[memories.length - 1]
+
+      memories[memories.length - 1] = new AddressMemory({
+        start: element.getStart,
+        end: element.getEnd - 1,
+      })
+    }
+
+    for (let memory = 0; memory < memories.length; memory++) {
+      const element = memories[memory]
+
+      for (let i = element.getStart; i <= element.getEnd; i++) {
+        this.physicMemory[i] = process.getId
+        this.logCreateProcess(i, process.getId)
+      }
+    }
   }
 
   private writeWithPaging(process: Process) {
-    const frames = this.findPaging(process.getSize)
+    const addressMemories = this.findPaging(process.getSize)
 
-    if (frames) {
-      this.writeInPhysicMemoryWithPaging(frames)
+    if (addressMemories) {
+      this.allocateProcessWithPaging(addressMemories, process)
+      this.logicMemory.set(process.getId, addressMemories)
     } else {
       this.logErrorInCreateProcess(process.getId, process.getSize)
     }
   }
 
   // DELETE PROCESS
-  public deleteProcess(id: string, { start, end }: AddressMemoryProps): void {
-    this.physicMemory = this.physicMemory.map((element) => {
-      if (element === id) {
-        return undefined
+  public deleteProcess(
+    id: string,
+    address: AddressMemory | AddressMemory[],
+  ): void {
+    if (address instanceof AddressMemory) {
+      for (let i = 0; i < this.physicMemory.length; i++) {
+        const element = this.physicMemory[i]
+
+        if (element === id) {
+          this.physicMemory[i] = undefined
+        }
       }
 
-      return element
-    })
-    console.log(
-      `--------------------------------------------------------------------------`,
-    )
-    console.log(
-      `Process remove: ${id} with success!\nReleased size: ${start} - ${end}`,
-    )
-    console.log(
-      `--------------------------------------------------------------------------\n`,
-    )
+      this.logRemoveProcess(id, {
+        start: address.getStart,
+        end: address.getEnd,
+      })
+    }
+
+    if (address instanceof Array) {
+      const addressMemories = this.logicMemory.get(id)
+
+      for (let i = 0; i < addressMemories!.length; i++) {
+        const element = addressMemories![i]
+
+        for (let i = element.getStart; i <= element.getEnd; i++) {
+          this.physicMemory[i] = undefined
+        }
+
+        this.logRemoveProcess(id, {
+          start: element.getStart,
+          end: element.getEnd,
+        })
+      }
+    }
   }
 
   // LOGS
@@ -226,6 +304,18 @@ export class MemoryManager {
 
   private logFinishProcess(id: string) {
     console.log(`\nProcess: ${id} initialized!\n`)
+  }
+
+  private logRemoveProcess(id: string, { start, end }: AddressMemoryProps) {
+    console.log(
+      `--------------------------------------------------------------------------`,
+    )
+    console.log(
+      `Process remove: ${id} with success!\nReleased size: ${start} - ${end}`,
+    )
+    console.log(
+      `--------------------------------------------------------------------------\n`,
+    )
   }
 
   private logErrorInCreateProcess(id: string, size: number) {

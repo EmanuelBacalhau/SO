@@ -3,6 +3,7 @@ import { Strategy } from '../memory/Strategy'
 import { CpuManager } from '../cpu/CpuManager'
 import { SystemCallType } from './SystemCallType'
 import { MemoryManager } from '../memory/MemoryManager'
+import { AddressMemory } from '../memory/AddressMemory'
 
 export class SystemOperation {
   private memoryManager: MemoryManager
@@ -31,10 +32,12 @@ export class SystemOperation {
       process &&
       process.getAddress
     ) {
-      this.memoryManager.deleteProcess(process.getId, {
-        start: process.getAddress!.getStart,
-        end: process.getAddress!.getEnd,
-      })
+      if (
+        process.getAddress instanceof AddressMemory ||
+        process.getAddress instanceof Array
+      ) {
+        this.memoryManager.deleteProcess(process.getId, process.getAddress)
+      }
     }
 
     // if (type === SystemCallType.READ_PROCESS) {}

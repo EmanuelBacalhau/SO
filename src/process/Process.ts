@@ -5,7 +5,7 @@ import { AddressMemoryProps } from '../memory/AddressMemoryProps'
 export class Process {
   private id: string
   private size: number
-  private address: AddressMemory | null = null
+  private address: AddressMemory | AddressMemory[] | null = null
 
   // segunda etapa
   // private time: number
@@ -26,11 +26,15 @@ export class Process {
     return this.size
   }
 
-  public get getAddress(): AddressMemory | null {
+  public get getAddress(): AddressMemory | AddressMemory[] | null {
     return this.address
   }
 
-  public setAddress({ start, end }: AddressMemoryProps) {
+  public setUniqueAddress({ start, end }: AddressMemoryProps) {
     this.address = new AddressMemory({ start, end })
+  }
+
+  public setManyAddresses(addresses: AddressMemory[]) {
+    this.address = addresses
   }
 }

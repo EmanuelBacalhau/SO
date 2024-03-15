@@ -17,7 +17,7 @@ systemOperation.systemCall(SystemCallType.WRITE_PROCESS, p2)
 // const p4 = systemOperation.systemCall(SystemCallType.OPEN_PROCESS)
 // systemOperation.systemCall(SystemCallType.WRITE_PROCESS, p4)
 
-// systemOperation.systemCall(SystemCallType.CLOSE_PROCESS, p1)
+systemOperation.systemCall(SystemCallType.CLOSE_PROCESS, p1)
 // systemOperation.systemCall(SystemCallType.CLOSE_PROCESS, p2)
 // systemOperation.systemCall(SystemCallType.CLOSE_PROCESS, p4)
 
