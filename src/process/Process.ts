@@ -13,9 +13,9 @@ export class Process {
   // private process: Process[]
   // private priority: boolean
 
-  constructor() {
+  constructor(size?: number) {
     this.id = randomUUID()
-    this.size = 5
+    this.size = size ?? Math.round(Math.random() * 128 + 1)
   }
 
   public get getId(): string {

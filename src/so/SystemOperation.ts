@@ -10,8 +10,8 @@ export class SystemOperation {
   private cpuManager: CpuManager
   // private scheduler: Scheduler
 
-  constructor(strategy: Strategy) {
-    this.memoryManager = new MemoryManager(strategy)
+  constructor(strategy: Strategy, pageSize?: number) {
+    this.memoryManager = new MemoryManager(strategy, pageSize)
     this.cpuManager = new CpuManager()
   }
 
@@ -40,7 +40,9 @@ export class SystemOperation {
       }
     }
 
-    // if (type === SystemCallType.READ_PROCESS) {}
+    if (type === SystemCallType.READ_PROCESS && process) {
+      this.memoryManager.readProcess(process)
+    }
 
     return null
   }
