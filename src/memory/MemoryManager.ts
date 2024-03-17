@@ -279,11 +279,13 @@ export class MemoryManager {
           this.physicMemory[i] = undefined
         }
 
-        this.logRemoveProcess(processId, {
-          start: element.getStart,
-          end: element.getEnd,
-        })
+        // this.logRemoveProcess(processId, {
+        //   start: element.getStart,
+        //   end: element.getEnd,
+        // })
       }
+
+      this.logRemoveManyAddressesMemory(processId, address)
 
       this.logicMemory.delete(processId)
     }
@@ -370,6 +372,25 @@ export class MemoryManager {
     console.log(
       `Process remove: ${id} with success!\nReleased size: ${start} - ${end}`,
     )
+    console.log(
+      `--------------------------------------------------------------------------\n`,
+    )
+  }
+
+  private logRemoveManyAddressesMemory(id: string, addresses: AddressMemory[]) {
+    console.log(
+      `--------------------------------------------------------------------------`,
+    )
+    console.log(`Process remove: ${id}`)
+    console.log(`Pages: ${addresses.length}`)
+    for (let page = 0; page < addresses.length; page++) {
+      const element = addresses[page]
+      console.log({
+        page: page + 1,
+        start: element.getStart,
+        end: element.getEnd,
+      })
+    }
     console.log(
       `--------------------------------------------------------------------------\n`,
     )
