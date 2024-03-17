@@ -52,9 +52,9 @@ systemOperation.systemCall(SystemCallType.WRITE_PROCESS, new Process(50))
 
 // systemOperation.systemCall(SystemCallType.WRITE_PROCESS, new Process(20))
 
-// systemOperation.systemCall(SystemCallType.WRITE_PROCESS, new Process(38))
-
 // systemOperation.systemCall(SystemCallType.WRITE_PROCESS, p2)
+
+// systemOperation.systemCall(SystemCallType.WRITE_PROCESS, new Process(38))
 
 // systemOperation.systemCall(SystemCallType.WRITE_PROCESS, new Process(20))
 
