@@ -5,9 +5,14 @@ interface DataProps {
   element: string | undefined
 }
 
+interface Pages extends AddressMemoryProps {
+  page: number
+}
+
 export interface ManyAddressMemoryDetailsProps {
   id: string
   size: number
-  pages: AddressMemoryProps[]
+  quantityOfPages: number
+  pages: Pages[]
   data: DataProps[]
 }

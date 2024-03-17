@@ -107,18 +107,22 @@ export class MemoryManager {
 
     let memory: AddressMemoryProps | null = null
 
+    let emptyMemoryCount = 0
+
     for (let i = 0; i < this.physicMemory.length; i++) {
       let j = i
 
       while (!this.physicMemory[j] && j < this.physicMemory.length) {
         j++
+        emptyMemoryCount++
       }
 
       const length = j - i
-      if (length >= size && length < small) {
+      if (length >= size && length < small && emptyMemoryCount < small) {
         start = i
         small = length
         i = j - 1
+        emptyMemoryCount = 0
       }
     }
 
@@ -291,15 +295,8 @@ export class MemoryManager {
     }
   }
 
+  // READ PROCESS
   public readProcess(process: Process) {
-    console.log(
-      `--------------------------------------------------------------------------`,
-    )
-    console.log(`Read process: ${process.getId}`)
-    console.log(
-      `--------------------------------------------------------------------------`,
-    )
-
     if (process.getAddress instanceof AddressMemory) {
       const details: UniqueAddressMemoryDetailsProps = {
         id: process.getId,
@@ -320,28 +317,66 @@ export class MemoryManager {
         details.data.push({ index: i, element })
       }
 
-      console.log(details)
+      if (!details.data[0].element) {
+        console.log(
+          `--------------------------------------------------------------------------`,
+        )
+        console.log(`Process: ${process.getId} not found!`)
+      } else {
+        console.log(
+          `--------------------------------------------------------------------------`,
+        )
+        console.log(`Read process: ${process.getId}`)
+        console.log(
+          `--------------------------------------------------------------------------`,
+        )
+
+        console.log(details)
+      }
     }
 
     if (process.getAddress instanceof Array) {
-      const details: ManyAddressMemoryDetailsProps = {
-        id: process.getId,
-        size: process.getSize,
-        pages: [],
-        data: [],
-      }
+      const memories = this.logicMemory.get(process.getId)
 
-      for (let page = 0; page < process.getAddress.length; page++) {
-        const element = process.getAddress[page]
-        details.pages.push({ start: element.getStart, end: element.getEnd })
-
-        for (let i = element.getStart; i <= element.getEnd; i++) {
-          const element = this.physicMemory[i]
-          details.data.push({ index: i, element })
+      if (memories) {
+        console.log(
+          `--------------------------------------------------------------------------`,
+        )
+        console.log(`Read process: ${process.getId}`)
+        console.log(
+          `--------------------------------------------------------------------------`,
+        )
+        const details: ManyAddressMemoryDetailsProps = {
+          id: process.getId,
+          size: process.getSize,
+          quantityOfPages: memories.length,
+          pages: [],
+          data: [],
         }
-      }
 
-      console.log(details)
+        for (let page = 0; page < memories.length; page++) {
+          const elementPage = memories[page]
+
+          details.pages.push({
+            page: page + 1,
+            start: elementPage.getStart,
+            end: elementPage.getEnd,
+          })
+
+          for (let i = elementPage.getStart; i <= elementPage.getEnd; i++) {
+            const element = this.physicMemory[i]
+
+            details.data.push({ index: i, element })
+          }
+        }
+
+        console.log(details)
+      } else {
+        console.log(
+          `--------------------------------------------------------------------------`,
+        )
+        console.log(`Process: ${process.getId} not found!`)
+      }
     }
 
     console.log(
