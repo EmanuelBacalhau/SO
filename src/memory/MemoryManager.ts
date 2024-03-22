@@ -69,7 +69,6 @@ export class MemoryManager {
 
     this.logicMemory.set(process.getId, pages)
 
-    console.log(process.getSubProcess)
-    console.log(process.getInstructions)
+    console.log(this.physicMemory)
   }
 }

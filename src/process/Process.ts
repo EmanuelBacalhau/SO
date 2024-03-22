@@ -20,18 +20,22 @@ export class Process {
     this.size = size
 
     this.subProcess = this.insertSubProcess()
-    this.instructions = this.size * 5
+    this.instructions = this.calculateInstructions()
   }
 
   private insertSubProcess() {
     const listOfSubProcess = []
 
     for (let i = 0; i < this.size; i++) {
-      const id = `${this.id}-${i}`
+      const id = `${this.id}-${i + 1}`
       listOfSubProcess.push(new SubProcess(id, 5))
     }
 
     return listOfSubProcess
+  }
+
+  private calculateInstructions() {
+    return this.size * 5
   }
 
   public get getInstructions() {
