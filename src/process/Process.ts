@@ -1,21 +1,45 @@
-import { randomUUID } from 'node:crypto'
-import { AddressMemory } from '../memory/AddressMemory'
-import { AddressMemoryProps } from '../memory/AddressMemoryProps'
+import { SubProcess } from './SubProcess'
 
 export class Process {
   private id: string
   private size: number
-  private address: AddressMemory | AddressMemory[] | null = null
+  private instructions: number
+  private subProcess: SubProcess[] = []
+  private pagesAddress: number[] = []
+
+  private static countProcess: number = 0
 
   // segunda etapa
   // private time: number
-  // private instructions: number
-  // private process: Process[]
   // private priority: boolean
 
-  constructor(size?: number) {
-    this.id = randomUUID()
-    this.size = size ?? Math.round(Math.random() * 128 + 1)
+  constructor(size: number) {
+    Process.countProcess++
+
+    this.id = `P${Process.countProcess}`
+    this.size = size
+
+    this.subProcess = this.insertSubProcess()
+    this.instructions = this.size * 5
+  }
+
+  private insertSubProcess() {
+    const listOfSubProcess = []
+
+    for (let i = 0; i < this.size; i++) {
+      const id = `${this.id}-${i}`
+      listOfSubProcess.push(new SubProcess(id, 5))
+    }
+
+    return listOfSubProcess
+  }
+
+  public get getInstructions() {
+    return this.instructions
+  }
+
+  public get getSubProcess() {
+    return this.subProcess
   }
 
   public get getId(): string {
@@ -26,15 +50,11 @@ export class Process {
     return this.size
   }
 
-  public get getAddress(): AddressMemory | AddressMemory[] | null {
-    return this.address
+  public get getPagesAddress() {
+    return this.pagesAddress
   }
 
-  public setUniqueAddress({ start, end }: AddressMemoryProps) {
-    this.address = new AddressMemory({ start, end })
-  }
-
-  public setManyAddresses(addresses: AddressMemory[]) {
-    this.address = addresses
+  public setPagesAddress(page: number) {
+    this.pagesAddress.push(page)
   }
 }
