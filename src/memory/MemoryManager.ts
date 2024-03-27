@@ -1,3 +1,4 @@
+import { SubProcessLogic } from '../interfaces/SubProcessLogic'
 import { Process } from '../process/Process'
 
 interface Page {
@@ -6,14 +7,14 @@ interface Page {
 }
 
 export class MemoryManager {
-  public physicMemory: (string | undefined)[][]
+  private physicMemory: (string | undefined)[][]
 
-  private logicMemory: Map<string, Page[]>
+  private logicMemory: Map<string, SubProcessLogic>
   private pageSize: number
 
   constructor(pageSize: number = 4) {
     this.pageSize = pageSize
-    this.logicMemory = new Map<string, Page[]>()
+    this.logicMemory = new Map<string, SubProcessLogic>()
 
     const pages = 256 / this.pageSize
     this.physicMemory = new Array(pages)
@@ -42,33 +43,50 @@ export class MemoryManager {
 
   private writeWithPaging(process: Process) {
     const emptyPages = this.findPages()
-
-    const pages: Page[] = []
     const requiredPages = process.getSize / this.pageSize
 
-    let count = 0
+    if (emptyPages.length < requiredPages) {
+      console.log('Page fault')
+    } else {
+      const pages: Page[] = []
 
-    for (
-      let frame = 0;
-      frame < emptyPages.length && pages.length < requiredPages;
-      frame++
-    ) {
-      const element = emptyPages[frame]
+      let count = 0
 
-      let indexPage = 0
+      for (
+        let frame = 0;
+        frame < emptyPages.length && pages.length < requiredPages;
+        frame++
+      ) {
+        const element = emptyPages[frame]
 
-      while (indexPage < element.page.length && count < process.getSize) {
-        element.page[indexPage] = `${process.getId}-${count + 1}`
-        count++
-        indexPage++
+        let indexPage = 0
+
+        while (indexPage < element.page.length && count < process.getSize) {
+          const subProcess = process.getSubProcess[count]
+          subProcess.setAddress({ frame, index: indexPage })
+
+          element.page[indexPage] = subProcess.getId
+
+          this.logicMemory.set(process.getSubProcess[count].getId, {
+            id: subProcess.getId,
+            instructions: subProcess.getInstruction,
+            processId: subProcess.getProcess.getId,
+          })
+
+          count++
+          indexPage++
+        }
+
+        pages.push(element)
       }
-
-      pages.push(element)
-      process.setPagesAddress(element.pageNumber)
     }
 
-    this.logicMemory.set(process.getId, pages)
-
+    console.log(
+      '---------------------------------------------------------------',
+    )
     console.log(this.physicMemory)
+    console.log(
+      '---------------------------------------------------------------',
+    )
   }
 }
