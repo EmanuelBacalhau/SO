@@ -1,21 +1,29 @@
-import { randomUUID } from 'node:crypto'
-import { AddressMemory } from '../memory/AddressMemory'
-import { AddressMemoryProps } from '../memory/AddressMemoryProps'
-
 export class Process {
   private id: string
   private size: number
-  private address: AddressMemory | AddressMemory[] | null = null
+  private instructions: number
+  private subProcess: string[]
 
-  // segunda etapa
-  // private time: number
-  // private instructions: number
-  // private process: Process[]
-  // private priority: boolean
+  static COUNT_PROCESS = 0
 
-  constructor(size?: number) {
-    this.id = randomUUID()
-    this.size = size ?? Math.round(Math.random() * 128 + 1)
+  constructor(size: number) {
+    Process.COUNT_PROCESS++
+
+    this.id = `P${Process.COUNT_PROCESS}`
+    this.size = size
+
+    this.subProcess = this.insertSubProcess()
+
+    this.instructions = this.subProcess.length * 7
+  }
+
+  private insertSubProcess() {
+    const subProcess = []
+    for (let i = 0; i < this.getSize; i++) {
+      subProcess.push(`${this.id}-${i}`)
+    }
+
+    return subProcess
   }
 
   public get getId(): string {
@@ -26,15 +34,11 @@ export class Process {
     return this.size
   }
 
-  public get getAddress(): AddressMemory | AddressMemory[] | null {
-    return this.address
+  public get getInstructions() {
+    return this.instructions
   }
 
-  public setUniqueAddress({ start, end }: AddressMemoryProps) {
-    this.address = new AddressMemory({ start, end })
-  }
-
-  public setManyAddresses(addresses: AddressMemory[]) {
-    this.address = addresses
+  public get getSubProcess() {
+    return this.subProcess
   }
 }
