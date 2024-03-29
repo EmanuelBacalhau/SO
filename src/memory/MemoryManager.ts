@@ -15,7 +15,7 @@ export class MemoryManager {
 
     this.physicMemory = new Array(quantityPages)
     for (let frame = 0; frame < this.physicMemory.length; frame++) {
-      this.physicMemory[frame] = new Array(this.pageSize)
+      this.physicMemory[frame] = new Array<undefined>(this.pageSize)
     }
 
     this.logicMemory = new Map<string, AddressMemory>()
@@ -90,28 +90,36 @@ export class MemoryManager {
         indexPage++
       }
     }
+
+    this.printMemory()
   }
 
-  // DELETE PROCESS
-  // public deleteProcess(
-  //   processId: string,
-  //   address: AddressMemory | AddressMemory[],
-  // ): void {
-  //   const addressMemories = this.logicMemory.get(processId)
+  public delete(process: Process): void {
+    const subProcess = process.getSubProcess
 
-  //   for (let i = 0; i < addressMemories!.length; i++) {
-  //     const element = addressMemories![i]
+    subProcess.forEach((value) => {
+      this.logicMemory.delete(value)
+    })
 
-  //     for (let i = element.getStart; i <= element.getEnd; i++) {
-  //       this.physicMemory[i] = undefined
-  //     }
+    this.physicMemory.forEach((page, index, array) => {
+      if (page[0]?.getProcess.getId === process.getId) {
+        array[index] = new Array(this.pageSize)
+      }
+    })
 
-  //     // this.logRemoveProcess(processId, {
-  //     //   start: element.getStart,
-  //     //   end: element.getEnd,
-  //     // })
-  //   }
+    this.printMemory()
+  }
 
-  //   this.logicMemory.delete(processId)
-  // }
+  private printMemory() {
+    console.log(
+      '----------------------------------------------------------------------',
+    )
+    for (let page = 0; page < this.physicMemory.length; page++) {
+      const element = this.physicMemory[page].map(
+        (subProcess) => subProcess?.getId,
+      )
+
+      console.log(element)
+    }
+  }
 }

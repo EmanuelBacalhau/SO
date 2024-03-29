@@ -32,5 +32,9 @@ export class SystemOperation {
     if (typeCall === SystemCallType.READ_PROCESS && process) {
       return this.memoryManager.read(process)
     }
+
+    if (typeCall === SystemCallType.CLOSE_PROCESS && process) {
+      return this.memoryManager.delete(process)
+    }
   }
 }

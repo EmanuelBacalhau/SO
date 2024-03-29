@@ -24,9 +24,7 @@ systemOperation.systemCall({
   process: p2 as Process,
 })
 
-console.log(
-  systemOperation.systemCall({
-    typeCall: SystemCallType.READ_PROCESS,
-    process: p2 as Process,
-  }),
-)
+systemOperation.systemCall({
+  typeCall: SystemCallType.CLOSE_PROCESS,
+  process: p2 as Process,
+})
