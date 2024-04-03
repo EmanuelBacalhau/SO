@@ -28,6 +28,11 @@ export class Core {
   private finish() {
     this.countInstructions = 0
     this._subProcess = null
+
+    if (this.subProcess) {
+      this.subProcess.close()
+      this.subProcess.getProcess.checkSubProcessConclusions()
+    }
   }
 
   public get getId() {
@@ -38,7 +43,7 @@ export class Core {
     return this._subProcess
   }
 
-  public set subProcess(subProcess: SubProcess) {
+  public set subProcess(subProcess: SubProcess | null) {
     this._subProcess = subProcess
   }
 }

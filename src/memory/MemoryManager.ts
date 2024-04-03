@@ -6,16 +6,16 @@ export class MemoryManager {
   public physicMemory: (SubProcess | undefined)[][]
 
   private logicMemory: Map<string, AddressMemory>
-  private pageSize: number
 
-  constructor(pageSize = 4, memorySize = 256) {
-    this.pageSize = pageSize
+  public static PAGE_SIZE = 4
+  public static MEMORY_SIZE = 256
 
-    const quantityPages = memorySize / this.pageSize
+  constructor() {
+    const quantityPages = MemoryManager.MEMORY_SIZE / MemoryManager.PAGE_SIZE
 
     this.physicMemory = new Array(quantityPages)
     for (let frame = 0; frame < this.physicMemory.length; frame++) {
-      this.physicMemory[frame] = new Array<undefined>(this.pageSize)
+      this.physicMemory[frame] = new Array<undefined>(MemoryManager.PAGE_SIZE)
     }
 
     this.logicMemory = new Map<string, AddressMemory>()
@@ -25,9 +25,9 @@ export class MemoryManager {
     const subProcess: SubProcess[] = []
 
     for (let i = 0; i < process.getSubProcess.length; i++) {
-      const subProcessId = process.getSubProcess[i]
+      const subProcessSelected = process.getSubProcess[i]
 
-      const addressSubProcess = this.logicMemory.get(subProcessId)
+      const addressSubProcess = this.logicMemory.get(subProcessSelected.id)
 
       if (
         addressSubProcess &&
@@ -74,14 +74,14 @@ export class MemoryManager {
       let indexPage = 0
 
       while (indexPage < page.length && countSize < process.getSize) {
-        const subProcessId = process.getSubProcess[countSize]
+        const subProcess = process.getSubProcess[countSize]
 
         this.physicMemory[frame][indexPage] = new SubProcess(
-          subProcessId,
+          subProcess.id,
           process,
         )
 
-        this.logicMemory.set(subProcessId, {
+        this.logicMemory.set(subProcess.id, {
           frame,
           index: indexPage,
         })
@@ -97,14 +97,14 @@ export class MemoryManager {
   public delete(process: Process): void {
     const subProcess = process.getSubProcess
 
-    subProcess.forEach((value) => {
-      this.logicMemory.delete(value)
-    })
-
     this.physicMemory.forEach((page, index, array) => {
       if (page[0]?.getProcess.getId === process.getId) {
-        array[index] = new Array(this.pageSize)
+        array[index] = new Array(MemoryManager.PAGE_SIZE)
       }
+    })
+
+    subProcess.forEach((value) => {
+      this.logicMemory.delete(value.id)
     })
 
     this.printMemory()

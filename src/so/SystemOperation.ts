@@ -2,6 +2,8 @@ import { Process } from '../process/Process'
 import { SystemCallType } from './SystemCallType'
 import { MemoryManager } from '../memory/MemoryManager'
 import { SubProcess } from '../process/SubProcess'
+import { Scheduler } from '../scheduler/Scheduler'
+import { FirstComeFirstServed } from '../scheduler/FirstComeFisrtServed'
 
 interface SystemCallProps {
   typeCall: SystemCallType
@@ -10,13 +12,10 @@ interface SystemCallProps {
 }
 
 export class SystemOperation {
-  private memoryManager: MemoryManager
+  public static memoryManager = new MemoryManager()
+  private scheduler: Scheduler = new FirstComeFirstServed()
 
-  constructor(pageSize?: number) {
-    this.memoryManager = new MemoryManager(pageSize)
-  }
-
-  public systemCall({
+  public static systemCall({
     typeCall,
     processSize,
     process,
