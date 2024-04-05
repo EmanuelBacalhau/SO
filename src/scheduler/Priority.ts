@@ -1,12 +1,20 @@
 import { Process } from '../process/Process'
+import { SubProcess } from '../process/SubProcess'
+import { SystemCallType } from '../so/SystemCallType'
+import { SystemOperation } from '../so/SystemOperation'
 import { SchedulerQueue } from './SchedulerQueue'
 
 export class Priority extends SchedulerQueue {
   public addSubProcess(process: Process): void {
-    throw new Error('Method not implemented.')
-  }
+    const subProcess: SubProcess[] = SystemOperation.systemCall({
+      typeCall: SystemCallType.READ,
+      process,
+    }) as SubProcess[]
 
-  public close(process: Process): void {
-    throw new Error('Method not implemented.')
+    subProcess.forEach((value) => {
+      this.queue.push(value)
+    })
+
+    this.queue.sort((a, b) => a.getPriority - b.getPriority)
   }
 }

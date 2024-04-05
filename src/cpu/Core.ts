@@ -15,13 +15,6 @@ export class Core {
   }
 
   public run() {
-    // this.countInstructions += this.numberOfInstructionsByClock
-
-    // if (
-    //   this._subProcess &&
-    //   this.countInstructions >= this._subProcess.getInstructions
-    // ) {
-    // }
     console.log(`Executing ${this._subProcess?.getId}`)
 
     this.finish()

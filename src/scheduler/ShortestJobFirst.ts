@@ -30,10 +30,4 @@ export class ShortestJobFirst extends SchedulerQueue {
       this.queue.sort((a, b) => b.getTimeExecution - a.getTimeExecution)
     }
   }
-
-  public close(process: Process): void {
-    this.queue = this.queue.filter(
-      (sb) => sb.getProcess.getId !== process.getId,
-    )
-  }
 }

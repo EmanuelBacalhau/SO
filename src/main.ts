@@ -22,7 +22,17 @@ SystemOperation.systemCall({
   process: p2 as Process,
 })
 
-SystemOperation.systemCall({
-  typeCall: SystemCallType.STOP,
-  process: p1 as Process,
+const p3 = SystemOperation.systemCall({
+  typeCall: SystemCallType.CREATE,
+  processSize: 10,
 })
+
+SystemOperation.systemCall({
+  typeCall: SystemCallType.WRITE,
+  process: p3 as Process,
+})
+
+// SystemOperation.systemCall({
+//   typeCall: SystemCallType.STOP,
+//   process: p1 as Process,
+// })
