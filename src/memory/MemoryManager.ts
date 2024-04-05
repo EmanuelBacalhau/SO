@@ -65,33 +65,38 @@ export class MemoryManager {
   private allocateProcessWithPaging(process: Process) {
     const emptyFrames = this.findEmptyPages()
 
-    let countSize = 0
+    if (emptyFrames.length < process.getSize / MemoryManager.PAGE_SIZE) {
+      // swap
+      console.log('Page fault')
+    } else {
+      let countSize = 0
 
-    for (let i = 0; i < emptyFrames.length; i++) {
-      const frame = emptyFrames[i]
-      const page = this.physicMemory[frame]
+      for (let i = 0; i < emptyFrames.length; i++) {
+        const frame = emptyFrames[i]
+        const page = this.physicMemory[frame]
 
-      let indexPage = 0
+        let indexPage = 0
 
-      while (indexPage < page.length && countSize < process.getSize) {
-        const subProcess = process.getSubProcess[countSize]
+        while (indexPage < page.length && countSize < process.getSize) {
+          const subProcess = process.getSubProcess[countSize]
 
-        this.physicMemory[frame][indexPage] = new SubProcess(
-          subProcess.id,
-          process,
-        )
+          this.physicMemory[frame][indexPage] = new SubProcess(
+            subProcess.id,
+            process,
+          )
 
-        this.logicMemory.set(subProcess.id, {
-          frame,
-          index: indexPage,
-        })
+          this.logicMemory.set(subProcess.id, {
+            frame,
+            index: indexPage,
+          })
 
-        countSize++
-        indexPage++
+          countSize++
+          indexPage++
+        }
       }
-    }
 
-    this.printMemory()
+      this.printMemory()
+    }
   }
 
   public delete(process: Process): void {
