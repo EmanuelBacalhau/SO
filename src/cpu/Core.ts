@@ -6,14 +6,12 @@ export class Core {
   private id: number
   private numberOfInstructionsByClock: number
   private _subProcess: SubProcess | undefined
-  private countInstructions: number
 
   constructor(id: number, numberOfInstructionsByClock: number) {
     this.id = id
     this.numberOfInstructionsByClock = numberOfInstructionsByClock
 
     this._subProcess = undefined
-    this.countInstructions = 0
   }
 
   public run({
@@ -49,20 +47,11 @@ export class Core {
 
   private finish() {
     if (this._subProcess) {
-      this._subProcess.finish()
       this._subProcess.getProcess.setInstructionsExecuted(
         this._subProcess.getInstructions,
       )
       this._subProcess.getProcess.checkSubProcessConclusions()
-
-      if (
-        this._subProcess.getProcess.getInstructions ===
-        this._subProcess.getProcess.getInstructionsExecuted
-      ) {
-        this._subProcess.getProcess.start()
-      }
     }
-    this.countInstructions = 0
 
     this._subProcess = undefined
   }

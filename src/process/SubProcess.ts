@@ -6,7 +6,6 @@ export class SubProcess {
   private process: Process
   private timeExecution: number
   private priority: number
-  private isCompleted: boolean
 
   constructor(id: string, process: Process) {
     this.id = id
@@ -16,15 +15,6 @@ export class SubProcess {
 
     const randomPriority = Math.floor(Math.random() * 2)
     this.priority = randomPriority
-    this.isCompleted = false
-  }
-
-  public start() {
-    this.isCompleted = false
-  }
-
-  public finish() {
-    this.isCompleted = true
   }
 
   public get getId(): string {
@@ -45,9 +35,5 @@ export class SubProcess {
 
   public get getProcess() {
     return this.process
-  }
-
-  public get getIsCompleted() {
-    return this.isCompleted
   }
 }

@@ -1,6 +1,3 @@
-import { SystemCallType } from '../so/SystemCallType'
-import { SystemOperation } from '../so/SystemOperation'
-
 export class Process {
   private id: string
   private size: number
@@ -27,19 +24,6 @@ export class Process {
     for (let i = 0; i < this.getSize; i++) {
       this.subProcess.push(`${this.id}-${i}`)
     }
-  }
-
-  public start() {
-    const subProcess = SystemOperation.systemCall({
-      typeCall: SystemCallType.READ,
-      process: this,
-    })
-
-    if (subProcess instanceof Array) {
-      subProcess.forEach((sb) => sb.start())
-    }
-
-    this.instructionsExecuted = 0
   }
 
   public checkSubProcessConclusions() {

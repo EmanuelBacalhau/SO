@@ -13,13 +13,15 @@ export class FirstComeFirstServed extends SchedulerQueue {
       process,
     }) as SubProcess[]
 
+    this.queue.push(process)
+
     subProcess.forEach((value) => {
-      this.queue.push(value)
+      this.subProcessList.push(value)
     })
   }
 
   public execute(): ExecuteSchedulerResponse | undefined {
-    const element = this.queue.shift()
+    const element = this.subProcessList.shift()
 
     if (element) {
       return {
