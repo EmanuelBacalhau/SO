@@ -29,7 +29,11 @@ export class ShortestJobFirst extends SchedulerQueue {
     } else {
       this.queue.sort((a, b) => b.getTimeExecution - a.getTimeExecution)
     }
+  }
 
-    console.log(this.queue)
+  public close(process: Process): void {
+    this.queue = this.queue.filter(
+      (sb) => sb.getProcess.getId !== process.getId,
+    )
   }
 }

@@ -15,4 +15,16 @@ export class FirstComeFirstServed extends SchedulerQueue {
       this.queue.push(value)
     })
   }
+
+  public close(process: Process): void {
+    let count = 0
+    for (let i = 0; i < this.queue.length; i++) {
+      const element = this.queue[i]
+      if (element.getProcess.getId === process.getId) {
+        count++
+      }
+    }
+
+    this.queue.splice(0, count)
+  }
 }

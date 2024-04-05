@@ -21,3 +21,8 @@ SystemOperation.systemCall({
   typeCall: SystemCallType.WRITE,
   process: p2 as Process,
 })
+
+SystemOperation.systemCall({
+  typeCall: SystemCallType.STOP,
+  process: p1 as Process,
+})
