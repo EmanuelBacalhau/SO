@@ -3,7 +3,8 @@ import { SystemCallType } from './SystemCallType'
 import { MemoryManager } from '../memory/MemoryManager'
 import { SubProcess } from '../process/SubProcess'
 import { Scheduler } from '../scheduler/Scheduler'
-import { FirstComeFirstServed } from '../scheduler/FirstComeFirstServed'
+// import { FirstComeFirstServed } from '../scheduler/FirstComeFirstServed'
+import { ShortestJobFirst } from '../scheduler/ShortestJobFirst'
 
 interface SystemCallProps {
   typeCall: SystemCallType
@@ -13,7 +14,7 @@ interface SystemCallProps {
 
 export class SystemOperation {
   public static memoryManager = new MemoryManager()
-  public static scheduler: Scheduler = new FirstComeFirstServed()
+  public static scheduler: Scheduler = new ShortestJobFirst()
 
   public static systemCall({
     typeCall,
