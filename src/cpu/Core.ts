@@ -3,47 +3,50 @@ import { SubProcess } from '../process/SubProcess'
 export class Core {
   private id: number
   private numberOfInstructionsByClock: number
-  private _subProcess: SubProcess | null
+  private _subProcess: SubProcess | undefined
   private countInstructions: number
 
   constructor(id: number, numberOfInstructionsByClock: number) {
     this.id = id
     this.numberOfInstructionsByClock = numberOfInstructionsByClock
 
-    this._subProcess = null
+    this._subProcess = undefined
     this.countInstructions = 0
   }
 
   public run() {
-    this.countInstructions += this.numberOfInstructionsByClock
+    // this.countInstructions += this.numberOfInstructionsByClock
 
-    if (
-      this._subProcess &&
-      this.countInstructions >= this._subProcess.getInstructions
-    ) {
-      this.finish()
-    }
+    // if (
+    //   this._subProcess &&
+    //   this.countInstructions >= this._subProcess.getInstructions
+    // ) {
+    // }
+    console.log(`Executing ${this._subProcess?.getId}`)
+
+    this.finish()
   }
 
   private finish() {
-    this.countInstructions = 0
-    this._subProcess = null
-
-    if (this.subProcess) {
-      this.subProcess.close()
-      this.subProcess.getProcess.checkSubProcessConclusions()
+    if (this._subProcess) {
+      this._subProcess.getProcess.setInstructionsExecuted(
+        this._subProcess.getInstructions,
+      )
+      this._subProcess.getProcess.checkSubProcessConclusions()
     }
+    this.countInstructions = 0
+    this._subProcess = undefined
   }
 
   public get getId() {
     return this.id
   }
 
-  public get subProcess(): SubProcess | null {
+  public get subProcess(): SubProcess | undefined {
     return this._subProcess
   }
 
-  public set subProcess(subProcess: SubProcess | null) {
+  public set subProcess(subProcess: SubProcess | undefined) {
     this._subProcess = subProcess
   }
 }

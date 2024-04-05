@@ -4,17 +4,11 @@ export class SubProcess {
   private id: string
   private instructions: number
   private process: Process
-  private isCompleted: boolean
 
   constructor(id: string, process: Process) {
     this.id = id
     this.instructions = 7
     this.process = process
-    this.isCompleted = false
-  }
-
-  public close() {
-    this.isCompleted = true
   }
 
   public get getId(): string {

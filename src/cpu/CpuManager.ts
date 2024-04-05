@@ -1,13 +1,15 @@
-import { SubProcess } from '../process/SubProcess'
+import { Scheduler } from '../scheduler/Scheduler'
 import { Core } from './Core'
 
 export class CpuManager {
   private cores: Core[]
   public static CLOCK: number = 5000
-  public static NUMBER_OF_INSTRUCTIONS_BY_CLOCK: number = 1
+  public static NUMBER_OF_INSTRUCTIONS_BY_CLOCK: number = 7
   public static NUMBER_OF_CORES: number = 1
+  private Scheduler: Scheduler
 
-  constructor() {
+  constructor(scheduler: Scheduler) {
+    this.Scheduler = scheduler
     this.cores = new Array(CpuManager.NUMBER_OF_CORES)
 
     for (let index = 0; index < this.cores.length; index++) {
@@ -20,10 +22,6 @@ export class CpuManager {
     this.runClock()
   }
 
-  public registerSubProcessInCore(index: number, subProcess: SubProcess) {
-    this.cores[index].subProcess = subProcess
-  }
-
   private runClock() {
     setInterval(() => {
       this.executeCores()
@@ -31,22 +29,16 @@ export class CpuManager {
   }
 
   private executeCores() {
-    this.cores.forEach((core) => {
-      core.run()
-    })
-  }
-
-  public get getEmptyCores() {
-    const cores = []
-
-    for (let i = 0; i < this.cores.length; i++) {
-      const element = this.cores[i]
-
-      if (element.subProcess === null) {
-        cores.push(this.cores[i])
-      }
+    const firstElement = this.Scheduler.execute()
+    if (firstElement) {
+      this.cores.forEach((core) => {
+        if (!core.subProcess) {
+          core.subProcess = firstElement
+          core.run()
+        }
+      })
+    } else {
+      console.log('Not sub process in queue!')
     }
-
-    return cores
   }
 }

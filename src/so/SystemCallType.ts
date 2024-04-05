@@ -1,6 +1,8 @@
 export enum SystemCallType {
-  OPEN_PROCESS,
-  READ_PROCESS,
-  CLOSE_PROCESS,
-  WRITE_PROCESS,
+  CREATE,
+  WRITE,
+  READ,
+  DELETE,
+  WAKE,
+  STOP,
 }

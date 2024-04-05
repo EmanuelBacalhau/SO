@@ -25,9 +25,9 @@ export class MemoryManager {
     const subProcess: SubProcess[] = []
 
     for (let i = 0; i < process.getSubProcess.length; i++) {
-      const subProcessSelected = process.getSubProcess[i]
+      const subProcessIdSelected = process.getSubProcess[i]
 
-      const addressSubProcess = this.logicMemory.get(subProcessSelected.id)
+      const addressSubProcess = this.logicMemory.get(subProcessIdSelected)
 
       if (
         addressSubProcess &&
@@ -78,14 +78,14 @@ export class MemoryManager {
         let indexPage = 0
 
         while (indexPage < page.length && countSize < process.getSize) {
-          const subProcess = process.getSubProcess[countSize]
+          const subProcessId = process.getSubProcess[countSize]
 
           this.physicMemory[frame][indexPage] = new SubProcess(
-            subProcess.id,
+            subProcessId,
             process,
           )
 
-          this.logicMemory.set(subProcess.id, {
+          this.logicMemory.set(subProcessId, {
             frame,
             index: indexPage,
           })
@@ -108,8 +108,8 @@ export class MemoryManager {
       }
     })
 
-    subProcess.forEach((value) => {
-      this.logicMemory.delete(value.id)
+    subProcess.forEach((sb) => {
+      this.logicMemory.delete(sb)
     })
 
     this.printMemory()
