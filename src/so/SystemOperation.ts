@@ -44,8 +44,12 @@ export class SystemOperation {
       this.scheduler.close(process)
     }
 
+    if (typeCall === SystemCallType.AGAIN && process) {
+      this.scheduler.addSubProcess(process)
+    }
+
     if (typeCall === SystemCallType.WAKE && process) {
-      // trazer de volta do hd
+      console.log('swap')
     }
   }
 }

@@ -49,12 +49,21 @@ export class Core {
 
   private finish() {
     if (this._subProcess) {
+      this._subProcess.finish()
       this._subProcess.getProcess.setInstructionsExecuted(
         this._subProcess.getInstructions,
       )
       this._subProcess.getProcess.checkSubProcessConclusions()
+
+      if (
+        this._subProcess.getProcess.getInstructions ===
+        this._subProcess.getProcess.getInstructionsExecuted
+      ) {
+        this._subProcess.getProcess.start()
+      }
     }
     this.countInstructions = 0
+
     this._subProcess = undefined
   }
 
