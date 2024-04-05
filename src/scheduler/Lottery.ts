@@ -1,8 +1,10 @@
+import { ExecuteSchedulerResponse } from '../interfaces/ExecuteSchedulerResponse'
 import { Process } from '../process/Process'
 import { SubProcess } from '../process/SubProcess'
 import { SystemCallType } from '../so/SystemCallType'
 import { SystemOperation } from '../so/SystemOperation'
 import { Scheduler } from './Scheduler'
+import { SchedulerType } from './SchedulerType'
 
 export class Lottery extends Scheduler {
   private subProcess: SubProcess[]
@@ -23,13 +25,23 @@ export class Lottery extends Scheduler {
     })
   }
 
-  public execute(): SubProcess | undefined {
+  public execute(): ExecuteSchedulerResponse | undefined {
     const randomIndex = Math.floor(Math.random() * this.subProcess.length)
     const element = this.subProcess[randomIndex]
 
     this.subProcess = this.subProcess.filter((sb) => sb.getId !== element.getId)
 
-    return element
+    if (element) {
+      return {
+        element,
+        type: SchedulerType.LOTTERY,
+        index: randomIndex,
+        priority: element.getPriority,
+        timeExecution: element.getTimeExecution,
+      }
+    } else {
+      return undefined
+    }
   }
 
   public close(process: Process): void {

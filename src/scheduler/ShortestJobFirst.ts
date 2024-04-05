@@ -5,6 +5,8 @@ import { SubProcess } from '../process/SubProcess'
 
 import { SystemCallType } from '../so/SystemCallType'
 import { SystemOperation } from '../so/SystemOperation'
+import { ExecuteSchedulerResponse } from '../interfaces/ExecuteSchedulerResponse'
+import { SchedulerType } from './SchedulerType'
 
 export class ShortestJobFirst extends SchedulerQueue {
   private order: 'ASC' | 'DESC'
@@ -28,6 +30,22 @@ export class ShortestJobFirst extends SchedulerQueue {
       this.queue.sort((a, b) => a.getTimeExecution - b.getTimeExecution)
     } else {
       this.queue.sort((a, b) => b.getTimeExecution - a.getTimeExecution)
+    }
+  }
+
+  public execute(): ExecuteSchedulerResponse | undefined {
+    const element = this.queue.shift()
+
+    if (element) {
+      return {
+        element,
+        index: 0,
+        priority: element?.getPriority,
+        timeExecution: element?.getTimeExecution,
+        type: SchedulerType.SHORTEST_JOB_FIRST,
+      }
+    } else {
+      return undefined
     }
   }
 }

@@ -31,9 +31,17 @@ export class CpuManager {
   private executeCores() {
     this.cores.forEach((core) => {
       const firstElement = this.Scheduler.execute()
+
       if (!core.subProcess && firstElement) {
-        core.subProcess = firstElement
-        core.run()
+        core.subProcess = firstElement.element
+
+        core.run({
+          element: firstElement.element,
+          index: firstElement.index,
+          priority: firstElement.priority,
+          timeExecution: firstElement.timeExecution,
+          type: firstElement.type,
+        })
       }
     })
   }

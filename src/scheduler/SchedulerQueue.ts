@@ -1,3 +1,4 @@
+import { ExecuteSchedulerResponse } from '../interfaces/ExecuteSchedulerResponse'
 import { Process } from '../process/Process'
 import { SubProcess } from '../process/SubProcess'
 import { Scheduler } from './Scheduler'
@@ -8,10 +9,6 @@ export abstract class SchedulerQueue extends Scheduler {
   constructor() {
     super()
     this.queue = []
-  }
-
-  public execute(): SubProcess | undefined {
-    return this.queue.shift()
   }
 
   public close(process: Process): void {

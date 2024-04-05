@@ -32,7 +32,13 @@ export class Process {
 
   public checkSubProcessConclusions() {
     if (this.instructionsExecuted === this.instructions) {
+      console.log(
+        `--------------------------------------------------------------`,
+      )
       console.log(`Process ${this.id} finalized`)
+      console.log(
+        `--------------------------------------------------------------`,
+      )
     }
   }
 

@@ -1,4 +1,6 @@
+import { ExecuteSchedulerResponse } from '../interfaces/ExecuteSchedulerResponse'
 import { SubProcess } from '../process/SubProcess'
+import { SchedulerType } from '../scheduler/SchedulerType'
 
 export class Core {
   private id: number
@@ -14,8 +16,33 @@ export class Core {
     this.countInstructions = 0
   }
 
-  public run() {
-    console.log(`Executing ${this._subProcess?.getId}`)
+  public run({
+    index,
+    timeExecution,
+    priority,
+    type,
+  }: ExecuteSchedulerResponse) {
+    if (type === SchedulerType.FIRST_COME_FIRST_SERVED) {
+      console.log(`Executing ${this._subProcess?.getId}`)
+    }
+
+    if (type === SchedulerType.PRIORITY) {
+      console.log(
+        `Executing ${this._subProcess?.getId} - Priority: ${priority !== 0}`,
+      )
+    }
+
+    if (type === SchedulerType.SHORTEST_JOB_FIRST) {
+      console.log(
+        `Executing ${this._subProcess?.getId} - Time executing: ${timeExecution}`,
+      )
+    }
+
+    if (type === SchedulerType.LOTTERY) {
+      console.log(
+        `Executing ${this._subProcess?.getId} - Random index: ${index}`,
+      )
+    }
 
     this.finish()
   }
