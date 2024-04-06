@@ -6,11 +6,13 @@ export class Process {
   private subProcess: string[]
   private timeExecution: number
   private priority: number
+  private inputMemory: number
 
   public static COUNT_PROCESS = 0
 
   constructor(size: number) {
     Process.COUNT_PROCESS++
+    this.inputMemory = Process.COUNT_PROCESS
 
     this.id = `P${Process.COUNT_PROCESS}`
     this.size = size
@@ -47,6 +49,10 @@ export class Process {
 
   public setInstructionsExecuted(quantity: number) {
     this.instructionsExecuted += quantity
+  }
+
+  public get getInputMemory() {
+    return this.inputMemory
   }
 
   public get getInstructionsExecuted() {

@@ -45,7 +45,50 @@ export class MemoryManager {
   }
 
   public write(process: Process) {
-    return this.allocateProcessWithPaging(process)
+    this.allocateProcessWithPaging(process)
+  }
+
+  public swap(process: Process): Process[] {
+    const emptyFramesLength = this.findEmptyPages().length
+    const quantityPages = process.getSize / MemoryManager.PAGE_SIZE
+
+    const sleeps: Process[] = []
+    if (emptyFramesLength >= quantityPages) {
+      return this.swap(process)
+    } else {
+      let firstProcess = null
+
+      for (let i = 0; i < this.physicMemory.length; i++) {
+        const element = this.physicMemory[i]
+
+        if (element[0]) {
+          const p = element[0].getProcess
+          if (!firstProcess) {
+            firstProcess = p
+          }
+
+          if (firstProcess.getInputMemory > p.getInputMemory) {
+            firstProcess = p
+          }
+        }
+      }
+
+      if (firstProcess) {
+        const sleepProcess = this.delete(firstProcess)
+        sleeps.push(sleepProcess)
+      }
+    }
+
+    return sleeps
+  }
+
+  public checkWrite(process: Process) {
+    const emptyFrames = this.findEmptyPages()
+    if (emptyFrames.length < process.getSize / MemoryManager.PAGE_SIZE) {
+      return false
+    } else {
+      return true
+    }
   }
 
   private findEmptyPages() {
@@ -65,50 +108,36 @@ export class MemoryManager {
   private allocateProcessWithPaging(process: Process) {
     const emptyFrames = this.findEmptyPages()
 
-    if (emptyFrames.length < process.getSize / MemoryManager.PAGE_SIZE) {
-      // swap
+    let countSize = 0
 
-      if (
-        process.getSize / MemoryManager.PAGE_SIZE >
-        this.physicMemory.length
-      ) {
-        return 2
-      } else {
-        return 1
+    for (let i = 0; i < emptyFrames.length; i++) {
+      const frame = emptyFrames[i]
+      const page = this.physicMemory[frame]
+
+      let indexPage = 0
+
+      while (indexPage < page.length && countSize < process.getSize) {
+        const subProcessId = process.getSubProcess[countSize]
+
+        this.physicMemory[frame][indexPage] = new SubProcess(
+          subProcessId,
+          process,
+        )
+
+        this.logicMemory.set(subProcessId, {
+          frame,
+          index: indexPage,
+        })
+
+        countSize++
+        indexPage++
       }
-    } else {
-      let countSize = 0
-
-      for (let i = 0; i < emptyFrames.length; i++) {
-        const frame = emptyFrames[i]
-        const page = this.physicMemory[frame]
-
-        let indexPage = 0
-
-        while (indexPage < page.length && countSize < process.getSize) {
-          const subProcessId = process.getSubProcess[countSize]
-
-          this.physicMemory[frame][indexPage] = new SubProcess(
-            subProcessId,
-            process,
-          )
-
-          this.logicMemory.set(subProcessId, {
-            frame,
-            index: indexPage,
-          })
-
-          countSize++
-          indexPage++
-        }
-      }
-
-      this.printMemory()
-      return 0
     }
+
+    this.printMemory()
   }
 
-  public delete(process: Process): void {
+  public delete(process: Process) {
     const subProcess = process.getSubProcess
 
     this.physicMemory.forEach((page, index, array) => {
@@ -122,6 +151,8 @@ export class MemoryManager {
     })
 
     this.printMemory()
+
+    return process
   }
 
   private printMemory() {

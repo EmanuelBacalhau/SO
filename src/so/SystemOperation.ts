@@ -8,6 +8,7 @@ import { Lottery } from '../scheduler/Lottery'
 import { ShortestJobFirst } from '../scheduler/ShortestJobFirst'
 import { Priority } from '../scheduler/Priority'
 import { RoundRobin } from '../scheduler/RoundRobin'
+import { HDManager } from '../memory/HDManager'
 
 interface SystemCallProps {
   typeCall: SystemCallType
@@ -17,7 +18,8 @@ interface SystemCallProps {
 
 export class SystemOperation {
   public static memoryManager = new MemoryManager()
-  public static scheduler: Scheduler = new RoundRobin(8)
+  public static hdManager = new HDManager()
+  public static scheduler: Scheduler = new ShortestJobFirst('DESC')
 
   public static systemCall({
     typeCall,
@@ -29,22 +31,22 @@ export class SystemOperation {
     }
 
     if (typeCall === SystemCallType.WRITE && process) {
-      const isWritten = this.memoryManager.write(process)
+      const checkWrite = this.memoryManager.checkWrite(process)
 
-      if (isWritten === 0) {
+      if (checkWrite) {
+        this.memoryManager.write(process)
         this.scheduler.addSubProcess(process)
-      }
+      } else {
+        const processes = this.memoryManager.swap(process)
 
-      if (isWritten === 1) {
-        console.log('------------------------------------------------------')
-        console.log('Page fault')
-        console.log('------------------------------------------------------')
-      }
+        for (let i = 0; i < processes.length; i++) {
+          const element = processes[i]
+          this.hdManager.write(element)
+          this.scheduler.close(element)
+        }
 
-      if (isWritten === 2) {
-        console.log('------------------------------------------------------')
-        console.log('Big memory')
-        console.log('------------------------------------------------------')
+        this.memoryManager.write(process)
+        this.scheduler.addSubProcess(process)
       }
     }
 
@@ -61,8 +63,25 @@ export class SystemOperation {
       this.scheduler.close(process)
     }
 
-    if (typeCall === SystemCallType.WAKE) {
-      // this.scheduler.execute()
+    if (typeCall === SystemCallType.WAKE && process) {
+      const checkWrite = this.memoryManager.checkWrite(process)
+
+      if (checkWrite) {
+        this.memoryManager.write(process)
+        this.scheduler.addSubProcess(process)
+      } else {
+        const processes = this.memoryManager.swap(process)
+
+        for (let i = 0; i < processes.length; i++) {
+          const element = processes[i]
+          this.hdManager.write(element)
+          this.scheduler.close(element)
+        }
+
+        this.memoryManager.write(process)
+        this.scheduler.addSubProcess(process)
+        this.hdManager.remove(process)
+      }
     }
   }
 }

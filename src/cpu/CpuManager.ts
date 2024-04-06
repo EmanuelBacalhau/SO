@@ -42,5 +42,7 @@ export class CpuManager {
         }
       }
     })
+
+    console.log('------------------------------------------')
   }
 }

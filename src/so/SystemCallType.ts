@@ -5,5 +5,4 @@ export enum SystemCallType {
   DELETE,
   WAKE,
   STOP,
-  AGAIN,
 }
