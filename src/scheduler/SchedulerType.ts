@@ -3,4 +3,5 @@ export enum SchedulerType {
   FIRST_COME_FIRST_SERVED,
   PRIORITY,
   SHORTEST_JOB_FIRST,
+  ROUND_ROBIN,
 }

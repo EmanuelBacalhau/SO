@@ -17,7 +17,7 @@ interface SystemCallProps {
 
 export class SystemOperation {
   public static memoryManager = new MemoryManager()
-  public static scheduler: Scheduler = new RoundRobin(4)
+  public static scheduler: Scheduler = new RoundRobin(8)
 
   public static systemCall({
     typeCall,
@@ -29,8 +29,23 @@ export class SystemOperation {
     }
 
     if (typeCall === SystemCallType.WRITE && process) {
-      this.memoryManager.write(process)
-      this.scheduler.addSubProcess(process)
+      const isWritten = this.memoryManager.write(process)
+
+      if (isWritten === 0) {
+        this.scheduler.addSubProcess(process)
+      }
+
+      if (isWritten === 1) {
+        console.log('------------------------------------------------------')
+        console.log('Page fault')
+        console.log('------------------------------------------------------')
+      }
+
+      if (isWritten === 2) {
+        console.log('------------------------------------------------------')
+        console.log('Big memory')
+        console.log('------------------------------------------------------')
+      }
     }
 
     if (typeCall === SystemCallType.READ && process) {
@@ -40,6 +55,10 @@ export class SystemOperation {
     if (typeCall === SystemCallType.DELETE && process) {
       this.scheduler.close(process)
       return this.memoryManager.delete(process)
+    }
+
+    if (typeCall === SystemCallType.STOP && process) {
+      this.scheduler.close(process)
     }
 
     if (typeCall === SystemCallType.WAKE) {

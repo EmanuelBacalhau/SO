@@ -12,16 +12,6 @@ export abstract class SchedulerQueue extends Scheduler {
     this.queueSubProcesses = []
   }
 
-  public execute(): SubProcess | undefined {
-    const element = this.queueSubProcesses.shift()
-
-    if (element) {
-      return element
-    } else {
-      return undefined
-    }
-  }
-
   public close(process: Process): void {
     this.queueProcess = this.queueProcess.filter(
       (p) => p.getId !== process.getId,

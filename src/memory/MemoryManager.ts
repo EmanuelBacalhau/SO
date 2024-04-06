@@ -44,8 +44,8 @@ export class MemoryManager {
     return subProcess
   }
 
-  public write(process: Process): void {
-    this.allocateProcessWithPaging(process)
+  public write(process: Process) {
+    return this.allocateProcessWithPaging(process)
   }
 
   private findEmptyPages() {
@@ -67,7 +67,15 @@ export class MemoryManager {
 
     if (emptyFrames.length < process.getSize / MemoryManager.PAGE_SIZE) {
       // swap
-      console.log('Page fault')
+
+      if (
+        process.getSize / MemoryManager.PAGE_SIZE >
+        this.physicMemory.length
+      ) {
+        return 2
+      } else {
+        return 1
+      }
     } else {
       let countSize = 0
 
@@ -96,6 +104,7 @@ export class MemoryManager {
       }
 
       this.printMemory()
+      return 0
     }
   }
 

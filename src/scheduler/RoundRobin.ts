@@ -1,8 +1,10 @@
+import { ExecuteSchedulerResponse } from '../interfaces/ExecuteSchedulerResponse'
 import { Process } from '../process/Process'
 import { SubProcess } from '../process/SubProcess'
 import { SystemCallType } from '../so/SystemCallType'
 import { SystemOperation } from '../so/SystemOperation'
 import { SchedulerQueue } from './SchedulerQueue'
+import { SchedulerType } from './SchedulerType'
 
 export class RoundRobin extends SchedulerQueue {
   private countExecutedSubProcess: number = 0
@@ -28,7 +30,7 @@ export class RoundRobin extends SchedulerQueue {
     this.processInExecution = this.queueProcess[0]
   }
 
-  public execute(): SubProcess | undefined {
+  public execute(): ExecuteSchedulerResponse | undefined {
     const element = this.queueSubProcesses.shift()
 
     if (element) {
@@ -43,11 +45,12 @@ export class RoundRobin extends SchedulerQueue {
         this.rotate()
       }
 
-      if (this.queueSubProcesses.length === 0) {
-        this.countExecutedSubProcess = 0
+      return {
+        element,
+        priority: element.getProcess.getPriority,
+        timeExecution: element.getProcess.getTimeExecution,
+        type: SchedulerType.ROUND_ROBIN,
       }
-
-      return element
     } else {
       return undefined
     }
