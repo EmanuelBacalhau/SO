@@ -4,17 +4,17 @@ export class SubProcess {
   private id: string
   private instructions: number
   private process: Process
-  private timeExecution: number
-  private priority: number
+  private isConclude: boolean
 
   constructor(id: string, process: Process) {
     this.id = id
     this.instructions = 7
     this.process = process
-    this.timeExecution = Math.round(Math.random() * 20)
+    this.isConclude = false
+  }
 
-    const randomPriority = Math.floor(Math.random() * 2)
-    this.priority = randomPriority
+  public finish() {
+    this.isConclude = true
   }
 
   public get getId(): string {
@@ -25,12 +25,8 @@ export class SubProcess {
     return this.instructions
   }
 
-  public get getTimeExecution() {
-    return this.timeExecution
-  }
-
-  public get getPriority() {
-    return this.priority
+  public get getIsConclude() {
+    return this.isConclude
   }
 
   public get getProcess() {

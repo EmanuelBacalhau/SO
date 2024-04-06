@@ -3,18 +3,32 @@ import { SubProcess } from '../process/SubProcess'
 import { Scheduler } from './Scheduler'
 
 export abstract class SchedulerQueue extends Scheduler {
-  protected queue: Process[]
-  protected subProcessList: SubProcess[] = []
+  protected queueProcess: Process[]
+  protected queueSubProcesses: SubProcess[]
 
   constructor() {
     super()
-    this.queue = []
+    this.queueProcess = []
+    this.queueSubProcesses = []
+  }
+
+  public execute(): SubProcess | undefined {
+    const element = this.queueSubProcesses.shift()
+
+    if (element) {
+      return element
+    } else {
+      return undefined
+    }
   }
 
   public close(process: Process): void {
-    this.queue = this.queue.filter((p) => p.getId !== process.getId)
-    this.subProcessList = this.subProcessList.filter(
-      (sb) => sb.getProcess.getId !== process.getId,
+    this.queueProcess = this.queueProcess.filter(
+      (p) => p.getId !== process.getId,
+    )
+
+    this.queueSubProcesses = this.queueSubProcesses.filter(
+      (sp) => sp.getProcess.getId !== process.getId,
     )
   }
 }

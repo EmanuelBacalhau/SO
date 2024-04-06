@@ -1,6 +1,6 @@
 import { CpuManager } from '../cpu/CpuManager'
-import { ExecuteSchedulerResponse } from '../interfaces/ExecuteSchedulerResponse'
 import { Process } from '../process/Process'
+import { SubProcess } from '../process/SubProcess'
 
 export abstract class Scheduler {
   private cpuManager: CpuManager
@@ -10,7 +10,7 @@ export abstract class Scheduler {
   }
 
   public abstract addSubProcess(process: Process): void
-  public abstract execute(): ExecuteSchedulerResponse | undefined
+  public abstract execute(): SubProcess | undefined
   public abstract close(process: Process): void
 
   public get getCpuManage() {

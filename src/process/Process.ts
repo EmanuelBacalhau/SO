@@ -4,6 +4,8 @@ export class Process {
   private instructions: number
   private instructionsExecuted: number
   private subProcess: string[]
+  private timeExecution: number
+  private priority: number
 
   public static COUNT_PROCESS = 0
 
@@ -18,6 +20,11 @@ export class Process {
 
     this.instructions = this.subProcess.length * 7
     this.instructionsExecuted = 0
+
+    this.timeExecution = Math.round(Math.random() * 50)
+
+    const randomPriority = Math.floor(Math.random() * 2)
+    this.priority = randomPriority
   }
 
   private insertSubProcess() {
@@ -60,5 +67,13 @@ export class Process {
 
   public get getSubProcess() {
     return this.subProcess
+  }
+
+  public get getTimeExecution() {
+    return this.timeExecution
+  }
+
+  public get getPriority() {
+    return this.priority
   }
 }

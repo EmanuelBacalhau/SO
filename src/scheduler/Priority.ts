@@ -4,14 +4,13 @@ import { SystemCallType } from '../so/SystemCallType'
 import { SystemOperation } from '../so/SystemOperation'
 import { SchedulerQueue } from './SchedulerQueue'
 
-export class Lottery extends SchedulerQueue {
+export class Priority extends SchedulerQueue {
   public addSubProcess(process: Process): void {
     this.queueProcess.push(process)
   }
 
   public execute(): SubProcess | undefined {
-    this.randomFirstProcess()
-
+    this.orderListByPriority()
     const element = this.queueSubProcesses.shift()
 
     if (element) {
@@ -21,9 +20,10 @@ export class Lottery extends SchedulerQueue {
     }
   }
 
-  private randomFirstProcess() {
-    const randomIndex = Math.floor(Math.random() * this.queueProcess.length)
-    const process = this.queueProcess[randomIndex]
+  private orderListByPriority() {
+    this.queueProcess.sort((a, b) => b.getPriority - a.getPriority)
+
+    const process = this.queueProcess.shift()
 
     if (process) {
       const subProcess: SubProcess[] = SystemOperation.systemCall({
@@ -34,10 +34,6 @@ export class Lottery extends SchedulerQueue {
       subProcess.forEach((value) => {
         this.queueSubProcesses.push(value)
       })
-
-      this.queueProcess = this.queueProcess.filter(
-        (p) => p.getId !== process.getId,
-      )
     }
   }
 }

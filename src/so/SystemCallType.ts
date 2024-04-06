@@ -1,9 +1,7 @@
 export enum SystemCallType {
-  CREATE,
-  WRITE,
-  READ,
-  DELETE,
+  CREATE_IN_MEMORY,
+  WRITE_IN_MEMORY,
+  READ_IN_MEMORY,
+  DELETE_IN_MEMORY,
   WAKE,
-  STOP,
-  AGAIN,
 }
