@@ -36,7 +36,7 @@ export class ShortestJobFirst extends SchedulerQueue {
 
       if (process) {
         const subProcess: SubProcess[] = SystemOperation.systemCall({
-          typeCall: SystemCallType.READ_IN_MEMORY,
+          typeCall: SystemCallType.READ,
           process,
         }) as SubProcess[]
 
@@ -51,7 +51,7 @@ export class ShortestJobFirst extends SchedulerQueue {
 
       if (process) {
         const subProcess: SubProcess[] = SystemOperation.systemCall({
-          typeCall: SystemCallType.READ_IN_MEMORY,
+          typeCall: SystemCallType.READ,
           process,
         }) as SubProcess[]
 

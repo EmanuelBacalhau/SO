@@ -24,24 +24,20 @@ export class SystemOperation {
     processSize,
     process,
   }: SystemCallProps): Process | void | SubProcess[] {
-    if (
-      typeCall === SystemCallType.CREATE_IN_MEMORY &&
-      processSize &&
-      !process
-    ) {
+    if (typeCall === SystemCallType.CREATE && processSize && !process) {
       return new Process(processSize)
     }
 
-    if (typeCall === SystemCallType.WRITE_IN_MEMORY && process) {
+    if (typeCall === SystemCallType.WRITE && process) {
       this.memoryManager.write(process)
       this.scheduler.addSubProcess(process)
     }
 
-    if (typeCall === SystemCallType.READ_IN_MEMORY && process) {
+    if (typeCall === SystemCallType.READ && process) {
       return this.memoryManager.read(process)
     }
 
-    if (typeCall === SystemCallType.DELETE_IN_MEMORY && process) {
+    if (typeCall === SystemCallType.DELETE && process) {
       this.scheduler.close(process)
       return this.memoryManager.delete(process)
     }

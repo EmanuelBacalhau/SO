@@ -9,7 +9,7 @@ export class FirstComeFirstServed extends SchedulerQueue {
     this.queueProcess.push(process)
 
     const subProcesses = SystemOperation.systemCall({
-      typeCall: SystemCallType.READ_IN_MEMORY,
+      typeCall: SystemCallType.READ,
       process,
     }) as SubProcess[]
 
