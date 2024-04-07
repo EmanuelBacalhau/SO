@@ -1,53 +1,87 @@
 import { Process } from '../process/Process'
-import { Strategy } from '../memory/Strategy'
-import { CpuManager } from '../cpu/CpuManager'
 import { SystemCallType } from './SystemCallType'
 import { MemoryManager } from '../memory/MemoryManager'
-import { AddressMemory } from '../memory/AddressMemory'
+import { SubProcess } from '../process/SubProcess'
+import { Scheduler } from '../scheduler/Scheduler'
+import { FirstComeFirstServed } from '../scheduler/FirstComeFirstServed'
+import { Lottery } from '../scheduler/Lottery'
+import { ShortestJobFirst } from '../scheduler/ShortestJobFirst'
+import { Priority } from '../scheduler/Priority'
+import { RoundRobin } from '../scheduler/RoundRobin'
+import { HDManager } from '../memory/HDManager'
+
+interface SystemCallProps {
+  typeCall: SystemCallType
+  processSize?: number
+  process?: Process
+}
 
 export class SystemOperation {
-  private memoryManager: MemoryManager
-  private cpuManager: CpuManager
-  // private scheduler: Scheduler
+  public static memoryManager = new MemoryManager()
+  public static hdManager = new HDManager()
+  public static scheduler: Scheduler = new ShortestJobFirst('DESC')
 
-  constructor(strategy: Strategy, pageSize?: number) {
-    this.memoryManager = new MemoryManager(strategy, pageSize)
-    this.cpuManager = new CpuManager()
-  }
-
-  public systemCall(
-    type: SystemCallType,
-    process: Process | null = null,
-  ): Process | null {
-    if (type === SystemCallType.OPEN_PROCESS) {
-      return this.createProcess()
+  public static systemCall({
+    typeCall,
+    processSize,
+    process,
+  }: SystemCallProps): Process | void | SubProcess[] {
+    if (typeCall === SystemCallType.CREATE && processSize && !process) {
+      return new Process(processSize)
     }
 
-    if (type === SystemCallType.WRITE_PROCESS && process) {
-      this.memoryManager.write(process)
-    }
+    if (typeCall === SystemCallType.WRITE && process) {
+      const checkWrite = this.memoryManager.checkWrite(process)
 
-    if (
-      type === SystemCallType.CLOSE_PROCESS &&
-      process &&
-      process.getAddress
-    ) {
-      if (
-        process.getAddress instanceof AddressMemory ||
-        process.getAddress instanceof Array
-      ) {
-        this.memoryManager.deleteProcess(process.getId, process.getAddress)
+      if (checkWrite) {
+        this.memoryManager.write(process)
+        this.scheduler.addSubProcess(process)
+      } else {
+        const processes = this.memoryManager.swap(process)
+
+        for (let i = 0; i < processes.length; i++) {
+          const element = processes[i]
+          this.hdManager.write(element)
+          this.scheduler.close(element)
+        }
+
+        this.memoryManager.write(process)
+        this.scheduler.addSubProcess(process)
       }
     }
 
-    if (type === SystemCallType.READ_PROCESS && process) {
-      this.memoryManager.readProcess(process)
+    if (typeCall === SystemCallType.READ && process) {
+      return this.memoryManager.read(process)
     }
 
-    return null
-  }
+    if (typeCall === SystemCallType.DELETE && process) {
+      this.scheduler.close(process)
+      return this.memoryManager.delete(process)
+    }
 
-  private createProcess(): Process {
-    return new Process()
+    if (typeCall === SystemCallType.STOP && process) {
+      this.scheduler.close(process)
+    }
+
+    if (typeCall === SystemCallType.WAKE && process) {
+      const checkWrite = this.memoryManager.checkWrite(process)
+
+      if (checkWrite) {
+        this.memoryManager.write(process)
+        this.scheduler.addSubProcess(process)
+      } else {
+        const processes = this.memoryManager.swap(process)
+
+        for (let i = 0; i < processes.length; i++) {
+          const element = processes[i]
+          this.hdManager.write(element)
+          this.scheduler.close(element)
+        }
+
+        this.memoryManager.write(process)
+        this.scheduler.addSubProcess(process)
+        this.hdManager.remove(process)
+      }
+    }
   }
 }
