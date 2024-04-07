@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsx src/main.ts",
     "lint": "eslint ./src --fix",
-    "build": "tsc"
+    "build": "tsup src --out-dir build"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +15,7 @@
     "@rocketseat/eslint-config": "^2.2.2",
     "@types/node": "^20.11.24",
     "eslint": "^8.57.0",
+    "tsup": "^8.0.2",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   }

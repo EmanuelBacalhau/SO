@@ -14,6 +14,7 @@ interface SystemCallProps {
   typeCall: SystemCallType
   processSize?: number
   process?: Process
+  priority?: number
 }
 
 export class SystemOperation {
@@ -25,9 +26,10 @@ export class SystemOperation {
     typeCall,
     processSize,
     process,
+    priority,
   }: SystemCallProps): Process | void | SubProcess[] {
     if (typeCall === SystemCallType.CREATE && processSize && !process) {
-      return new Process(processSize)
+      return new Process(processSize, priority)
     }
 
     if (typeCall === SystemCallType.WRITE && process) {
