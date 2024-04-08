@@ -4,7 +4,7 @@ import { SystemOperation } from './so/SystemOperation'
 
 const p1 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 101,
+  processSize: 100,
 })
 
 SystemOperation.systemCall({
@@ -14,7 +14,7 @@ SystemOperation.systemCall({
 
 const p2 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 100,
+  processSize: 1,
 })
 
 SystemOperation.systemCall({
@@ -31,20 +31,3 @@ SystemOperation.systemCall({
   typeCall: SystemCallType.WRITE,
   process: p3 as Process,
 })
-
-const p4 = SystemOperation.systemCall({
-  typeCall: SystemCallType.CREATE,
-  processSize: 100,
-})
-
-SystemOperation.systemCall({
-  typeCall: SystemCallType.WRITE,
-  process: p4 as Process,
-})
-
-SystemOperation.systemCall({
-  typeCall: SystemCallType.WAKE,
-  process: p1 as Process,
-})
-
-console.log(SystemOperation.hdManager.getHd)

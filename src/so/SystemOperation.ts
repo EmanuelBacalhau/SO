@@ -20,7 +20,7 @@ interface SystemCallProps {
 export class SystemOperation {
   public static memoryManager = new MemoryManager()
   public static hdManager = new HDManager()
-  public static scheduler: Scheduler = new ShortestJobFirst('DESC')
+  public static scheduler: Scheduler = new RoundRobin(4)
 
   public static systemCall({
     typeCall,

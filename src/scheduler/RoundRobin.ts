@@ -41,6 +41,34 @@ export class RoundRobin extends SchedulerQueue {
         this.countExecutedSubProcess++
       }
 
+      if (
+        this.processInExecution &&
+        this.processInExecution.getSize < this.quantum
+      ) {
+        if (this.processInExecution.getSize === 1) {
+          this.countExecutedSubProcess = 0
+          this.queueProcess.shift()
+          this.processInExecution = this.queueProcess[0]
+
+          return {
+            element,
+            priority: element.getProcess.getPriority,
+            timeExecution: element.getProcess.getTimeExecution,
+            type: SchedulerType.ROUND_ROBIN,
+          }
+        } else {
+          this.countExecutedSubProcess = 0
+          this.processInExecution = this.queueProcess[0]
+
+          return {
+            element,
+            priority: element.getProcess.getPriority,
+            timeExecution: element.getProcess.getTimeExecution,
+            type: SchedulerType.ROUND_ROBIN,
+          }
+        }
+      }
+
       if (this.countExecutedSubProcess === this.quantum) {
         this.rotate()
       }
