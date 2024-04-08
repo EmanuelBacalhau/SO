@@ -30,7 +30,7 @@ export class Core {
     if (type === SchedulerType.PRIORITY) {
       console.log({
         id: this._subProcess?.getId,
-        priority: priority === 1,
+        priority: priority === 2,
       })
     }
 
