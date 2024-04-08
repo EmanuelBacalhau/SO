@@ -12,7 +12,7 @@ export class Process {
 
   constructor(size: number, priority?: number) {
     Process.COUNT_PROCESS++
-    this.inputMemory = Process.COUNT_PROCESS
+    this.inputMemory = Date.now()
 
     this.id = `P${Process.COUNT_PROCESS}`
     this.size = size
@@ -45,6 +45,10 @@ export class Process {
         `--------------------------------------------------------------`,
       )
     }
+  }
+
+  public setInputMemory(inputMemory: number) {
+    this.inputMemory = inputMemory
   }
 
   public setInstructionsExecuted(quantity: number) {

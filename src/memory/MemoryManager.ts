@@ -160,9 +160,9 @@ export class MemoryManager {
       '----------------------------------------------------------------------',
     )
     for (let page = 0; page < this.physicMemory.length; page++) {
-      const element = this.physicMemory[page].map(
-        (subProcess) => subProcess?.getId,
-      )
+      const element = this.physicMemory[page].map((subProcess) => ({
+        id: subProcess?.getId,
+      }))
 
       console.log(element)
     }

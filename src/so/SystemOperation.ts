@@ -20,7 +20,7 @@ interface SystemCallProps {
 export class SystemOperation {
   public static memoryManager = new MemoryManager()
   public static hdManager = new HDManager()
-  public static scheduler: Scheduler = new RoundRobin(4)
+  public static scheduler: Scheduler = new Priority()
 
   public static systemCall({
     typeCall,
@@ -79,6 +79,8 @@ export class SystemOperation {
           this.hdManager.write(element)
           this.scheduler.close(element)
         }
+
+        process.setInputMemory(Date.now())
 
         this.memoryManager.write(process)
         this.scheduler.addSubProcess(process)

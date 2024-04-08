@@ -14,7 +14,7 @@ SystemOperation.systemCall({
 
 const p2 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 1,
+  processSize: 100,
 })
 
 SystemOperation.systemCall({
@@ -24,10 +24,30 @@ SystemOperation.systemCall({
 
 const p3 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 60,
+  processSize: 100,
 })
 
 SystemOperation.systemCall({
   typeCall: SystemCallType.WRITE,
   process: p3 as Process,
+})
+
+const p4 = SystemOperation.systemCall({
+  typeCall: SystemCallType.CREATE,
+  processSize: 60,
+})
+
+SystemOperation.systemCall({
+  typeCall: SystemCallType.WRITE,
+  process: p4 as Process,
+})
+
+SystemOperation.systemCall({
+  typeCall: SystemCallType.WAKE,
+  process: p1 as Process,
+})
+
+SystemOperation.systemCall({
+  typeCall: SystemCallType.WAKE,
+  process: p2 as Process,
 })
