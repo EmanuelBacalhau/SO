@@ -1,3 +1,4 @@
+import { CpuManager } from '../cpu/CpuManager'
 import { ExecuteSchedulerResponse } from '../interfaces/ExecuteSchedulerResponse'
 import { Process } from '../process/Process'
 import { SubProcess } from '../process/SubProcess'
@@ -12,7 +13,7 @@ export class RoundRobin extends SchedulerQueue {
 
   constructor(private quantum: number) {
     super()
-    this.quantum = quantum
+    this.quantum = quantum * CpuManager.NUMBER_OF_CORES
   }
 
   public addSubProcess(process: Process): void {
