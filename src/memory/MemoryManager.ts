@@ -49,13 +49,11 @@ export class MemoryManager {
   }
 
   public swap(process: Process): Process[] {
-    const emptyFramesLength = this.findEmptyPages().length
+    const sleeps: Process[] = []
     const quantityPages = process.getSize / MemoryManager.PAGE_SIZE
 
-    const sleeps: Process[] = []
-    if (emptyFramesLength >= quantityPages) {
-      return this.swap(process)
-    } else {
+    let emptyFramesLength = this.findEmptyPages().length
+    while (emptyFramesLength < quantityPages) {
       let firstProcess = null
 
       for (let i = 0; i < this.physicMemory.length; i++) {
@@ -72,9 +70,9 @@ export class MemoryManager {
           }
         }
       }
-
       if (firstProcess) {
         const sleepProcess = this.delete(firstProcess)
+        emptyFramesLength = this.findEmptyPages().length
         sleeps.push(sleepProcess)
       }
     }
