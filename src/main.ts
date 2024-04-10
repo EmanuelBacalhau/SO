@@ -4,7 +4,7 @@ import { SystemOperation } from './so/SystemOperation'
 
 const p1 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 99,
+  processSize: 79,
 })
 
 SystemOperation.systemCall({
@@ -14,7 +14,7 @@ SystemOperation.systemCall({
 
 const p2 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 41,
+  processSize: 11,
 })
 
 SystemOperation.systemCall({
@@ -24,7 +24,7 @@ SystemOperation.systemCall({
 
 const p3 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 57,
+  processSize: 53,
 })
 
 SystemOperation.systemCall({
@@ -34,7 +34,7 @@ SystemOperation.systemCall({
 
 const p4 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 19,
+  processSize: 11,
 })
 
 SystemOperation.systemCall({
@@ -44,7 +44,7 @@ SystemOperation.systemCall({
 
 const p5 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 40,
+  processSize: 81,
 })
 
 SystemOperation.systemCall({
@@ -54,7 +54,7 @@ SystemOperation.systemCall({
 
 const p6 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 101,
+  processSize: 10,
 })
 
 SystemOperation.systemCall({
@@ -62,13 +62,23 @@ SystemOperation.systemCall({
   process: p6 as Process,
 })
 
+const p7 = SystemOperation.systemCall({
+  typeCall: SystemCallType.CREATE,
+  processSize: 179,
+})
+
 SystemOperation.systemCall({
-  typeCall: SystemCallType.WAKE,
-  process: p1 as Process,
+  typeCall: SystemCallType.WRITE,
+  process: p7 as Process,
 })
 
 SystemOperation.systemCall({
   typeCall: SystemCallType.WAKE,
   process: p2 as Process,
+})
+
+SystemOperation.systemCall({
+  typeCall: SystemCallType.WAKE,
+  process: p4 as Process,
 })
 console.log(SystemOperation.hdManager.getHd)

@@ -71,6 +71,7 @@ export class SystemOperation {
       if (checkWrite) {
         this.memoryManager.write(process)
         this.scheduler.addSubProcess(process)
+        this.hdManager.remove(process)
       } else {
         const processes = this.memoryManager.swap(process)
 
