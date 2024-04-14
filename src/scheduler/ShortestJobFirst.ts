@@ -14,7 +14,7 @@ export class ShortestJobFirst extends SchedulerQueue {
     this.order = order
   }
 
-  public addSubProcess(process: Process): void {
+  public addProcess(process: Process): void {
     this.queueProcess.push(process)
   }
 

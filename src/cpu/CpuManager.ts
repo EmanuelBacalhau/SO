@@ -28,8 +28,9 @@ export class CpuManager {
   }
 
   private executeCores() {
+    let data = null
     this.cores.forEach((core) => {
-      const data = this.scheduler.execute()
+      data = this.scheduler.execute()
 
       if (data) {
         if (!core.subProcess) {
@@ -43,6 +44,8 @@ export class CpuManager {
       }
     })
 
-    console.log('------------------------------------------')
+    if (data) {
+      console.log('------------------------------------------')
+    }
   }
 }

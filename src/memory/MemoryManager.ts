@@ -109,21 +109,21 @@ export class MemoryManager {
     let countSize = 0
 
     for (let i = 0; i < emptyFrames.length; i++) {
-      const frame = emptyFrames[i]
-      const page = this.physicMemory[frame]
+      const indexFrame = emptyFrames[i]
+      const page = this.physicMemory[indexFrame]
 
       let indexPage = 0
 
       while (indexPage < page.length && countSize < process.getSize) {
         const subProcessId = process.getSubProcess[countSize]
 
-        this.physicMemory[frame][indexPage] = new SubProcess(
+        this.physicMemory[indexFrame][indexPage] = new SubProcess(
           subProcessId,
           process,
         )
 
         this.logicMemory.set(subProcessId, {
-          frame,
+          frame: indexFrame,
           index: indexPage,
         })
 

@@ -16,7 +16,7 @@ export class RoundRobin extends SchedulerQueue {
     this.quantum = quantum * CpuManager.NUMBER_OF_CORES
   }
 
-  public addSubProcess(process: Process): void {
+  public addProcess(process: Process): void {
     this.queueProcess.push(process)
 
     const subProcesses = SystemOperation.systemCall({

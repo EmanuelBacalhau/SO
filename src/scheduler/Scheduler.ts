@@ -9,7 +9,7 @@ export abstract class Scheduler {
     this.cpuManager = new CpuManager(this)
   }
 
-  public abstract addSubProcess(process: Process): void
+  public abstract addProcess(process: Process): void
   public abstract execute(): ExecuteSchedulerResponse | undefined
   public abstract close(process: Process): void
 

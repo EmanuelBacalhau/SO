@@ -7,7 +7,7 @@ import { SchedulerQueue } from './SchedulerQueue'
 import { SchedulerType } from './SchedulerType'
 
 export class Lottery extends SchedulerQueue {
-  public addSubProcess(process: Process): void {
+  public addProcess(process: Process): void {
     this.queueProcess.push(process)
   }
 

@@ -7,7 +7,7 @@ import { SchedulerQueue } from './SchedulerQueue'
 import { SchedulerType } from './SchedulerType'
 
 export class FirstComeFirstServed extends SchedulerQueue {
-  public addSubProcess(process: Process): void {
+  public addProcess(process: Process): void {
     this.queueProcess.push(process)
 
     const subProcesses = SystemOperation.systemCall({

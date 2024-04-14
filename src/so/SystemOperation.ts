@@ -20,7 +20,7 @@ interface SystemCallProps {
 export class SystemOperation {
   public static memoryManager = new MemoryManager()
   public static hdManager = new HDManager()
-  public static scheduler: Scheduler = new Priority()
+  public static scheduler: Scheduler = new FirstComeFirstServed()
 
   public static systemCall({
     typeCall,
@@ -37,7 +37,7 @@ export class SystemOperation {
 
       if (checkWrite) {
         this.memoryManager.write(process)
-        this.scheduler.addSubProcess(process)
+        this.scheduler.addProcess(process)
       } else {
         const processes = this.memoryManager.swap(process)
 
@@ -48,7 +48,7 @@ export class SystemOperation {
         }
 
         this.memoryManager.write(process)
-        this.scheduler.addSubProcess(process)
+        this.scheduler.addProcess(process)
       }
     }
 
@@ -70,7 +70,7 @@ export class SystemOperation {
 
       if (checkWrite) {
         this.memoryManager.write(process)
-        this.scheduler.addSubProcess(process)
+        this.scheduler.addProcess(process)
         this.hdManager.remove(process)
       } else {
         const processes = this.memoryManager.swap(process)
@@ -84,7 +84,7 @@ export class SystemOperation {
         process.setInputMemory(Date.now())
 
         this.memoryManager.write(process)
-        this.scheduler.addSubProcess(process)
+        this.scheduler.addProcess(process)
         this.hdManager.remove(process)
       }
     }
