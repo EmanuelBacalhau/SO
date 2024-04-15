@@ -14,7 +14,7 @@ SystemOperation.systemCall({
 
 const p2 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 100,
+  processSize: 67,
 })
 
 SystemOperation.systemCall({
@@ -24,7 +24,7 @@ SystemOperation.systemCall({
 
 const p3 = SystemOperation.systemCall({
   typeCall: SystemCallType.CREATE,
-  processSize: 56,
+  processSize: 50,
 })
 
 SystemOperation.systemCall({

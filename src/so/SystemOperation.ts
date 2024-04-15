@@ -7,8 +7,8 @@ import { FirstComeFirstServed } from '../scheduler/FirstComeFirstServed'
 import { Lottery } from '../scheduler/Lottery'
 import { ShortestJobFirst } from '../scheduler/ShortestJobFirst'
 import { Priority } from '../scheduler/Priority'
-import { RoundRobin } from '../scheduler/RoundRobin'
 import { HDManager } from '../memory/HDManager'
+import { RoundRobin } from '../scheduler/RoundRobin'
 
 interface SystemCallProps {
   typeCall: SystemCallType
@@ -20,7 +20,7 @@ interface SystemCallProps {
 export class SystemOperation {
   public static memoryManager = new MemoryManager()
   public static hdManager = new HDManager()
-  public static scheduler: Scheduler = new FirstComeFirstServed()
+  public static scheduler: Scheduler = new RoundRobin(16)
 
   public static systemCall({
     typeCall,
@@ -58,7 +58,7 @@ export class SystemOperation {
 
     if (typeCall === SystemCallType.DELETE && process) {
       this.scheduler.close(process)
-      return this.memoryManager.delete(process)
+      this.memoryManager.delete(process)
     }
 
     if (typeCall === SystemCallType.STOP && process) {
