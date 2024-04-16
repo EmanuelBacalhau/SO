@@ -15,23 +15,16 @@ export class Core {
   }
 
   public run({
-    priority,
     timeExecution,
     type,
-  }: Omit<ExecuteSchedulerResponse, 'element'>) {
+  }: Omit<ExecuteSchedulerResponse, 'element' | 'priority'>) {
     if (
       type === SchedulerType.FIRST_COME_FIRST_SERVED ||
       type === SchedulerType.ROUND_ROBIN ||
-      type === SchedulerType.LOTTERY
+      type === SchedulerType.LOTTERY ||
+      type === SchedulerType.PRIORITY
     ) {
       console.log({ id: this._subProcess?.getId })
-    }
-
-    if (type === SchedulerType.PRIORITY) {
-      console.log({
-        id: this._subProcess?.getId,
-        priority: priority === 2,
-      })
     }
 
     if (type === SchedulerType.SHORTEST_JOB_FIRST) {

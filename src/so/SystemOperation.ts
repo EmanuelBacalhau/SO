@@ -15,21 +15,23 @@ interface SystemCallProps {
   processSize?: number
   process?: Process
   priority?: number
+  timeExecution?: number
 }
 
 export class SystemOperation {
   public static memoryManager = new MemoryManager()
   public static hdManager = new HDManager()
-  public static scheduler: Scheduler = new RoundRobin(16)
+  public static scheduler: Scheduler = new ShortestJobFirst()
 
   public static systemCall({
     typeCall,
     processSize,
     process,
     priority,
+    timeExecution,
   }: SystemCallProps): Process | void | SubProcess[] {
     if (typeCall === SystemCallType.CREATE && processSize && !process) {
-      return new Process(processSize, priority)
+      return new Process(processSize, priority, timeExecution)
     }
 
     if (typeCall === SystemCallType.WRITE && process) {
@@ -49,6 +51,7 @@ export class SystemOperation {
 
         this.memoryManager.write(process)
         this.scheduler.addProcess(process)
+        // console.log('Page fault')
       }
     }
 

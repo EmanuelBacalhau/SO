@@ -44,8 +44,6 @@ export class RoundRobin extends SchedulerQueue {
         this.countExecutedSubProcess++
       }
 
-      console.log(this.processInExecution?.getId)
-
       const aux = this.queueSubProcesses.map((sp) => sp.getProcess.getId)
 
       if (!aux.includes(element.getProcess.getId)) {

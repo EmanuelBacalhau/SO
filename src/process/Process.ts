@@ -10,7 +10,7 @@ export class Process {
 
   public static COUNT_PROCESS = 0
 
-  constructor(size: number, priority?: number) {
+  constructor(size: number, priority?: number, timeExecution?: number) {
     Process.COUNT_PROCESS++
     this.inputMemory = Date.now()
 
@@ -23,10 +23,9 @@ export class Process {
     this.instructions = this.subProcess.length * 7
     this.instructionsExecuted = 0
 
-    this.timeExecution = Math.round(Math.random() * 50)
+    this.timeExecution = timeExecution || 0
 
-    const randomPriority = Math.floor(Math.random() * 2)
-    this.priority = priority || randomPriority
+    this.priority = priority || 0
   }
 
   private insertSubProcess() {

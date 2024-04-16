@@ -3,7 +3,7 @@ import { Core } from './Core'
 
 export class CpuManager {
   private cores: Core[]
-  public static CLOCK: number = 1000
+  public static CLOCK: number = 500
   public static NUMBER_OF_INSTRUCTIONS_BY_CLOCK: number = 7
   public static NUMBER_OF_CORES: number = 4
   private scheduler: Scheduler
